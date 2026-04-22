@@ -59,4 +59,4 @@ npm run start
 - Los componentes que usan `useState` (Header, ColombiaHuele) están marcados con `"use client"`.
 - La paleta institucional está centralizada en `src/styles/colors.ts` y expuesta en Tailwind como `brand-*`, `gov-*`, `neutral-*`, `support-*`.
 - El alias `@/*` apunta a `./src/*` (configurado en `tsconfig.json`).
-- **Pendiente:** agregar los assets (logos SENA, CampeSENA, Full Popular, imágenes de panaderías) en `public/`. Los componentes hacen referencia a rutas con `next/image` que deberás completar según tu set de imágenes.
+- **Pendiente:** Backend
