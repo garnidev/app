@@ -165,7 +165,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center"
+          className="absolute inset-x-0 bottom-2 z-10 flex items-end justify-center sm:bottom-1 md:bottom-0 lg:bottom-0"
         >
           <Image
             src="/assets/personas-primera-seccion.svg"
@@ -198,7 +198,7 @@ export function Hero() {
       </div>
 
       {/* Panadera central — fuera del contenedor con h-fija para poder extenderse debajo */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-[-35px] z-30 flex justify-center sm:bottom-[-45px] md:bottom-[-60px] lg:bottom-[-80px] xl:bottom-[-100px] 2xl:bottom-[-135px]">
+      <div className="pointer-events-none absolute inset-x-0 bottom-[-25px] z-30 flex justify-center sm:bottom-[-35px] md:bottom-[-55px] lg:bottom-[-80px] xl:bottom-[-100px] 2xl:bottom-[-180px]">
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           animate={{ opacity: 1, y: 0 }}
@@ -211,7 +211,7 @@ export function Hero() {
             alt="Chef panadera con panes de masa madre"
             width={480}
             height={658}
-            className="h-auto w-[150px] sm:w-[190px] md:w-[245px] lg:w-[315px] xl:w-[380px] 2xl:w-[445px]"
+            className="h-auto w-[150px] sm:w-[190px] md:w-[255px] lg:w-[370px] xl:w-[450px] 2xl:w-[525px]"
             priority
           />
         </motion.div>
