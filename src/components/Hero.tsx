@@ -1,14 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
 import {
   motion,
+  useReducedMotion,
   useScroll,
   useTransform,
-  useReducedMotion,
   type Variants,
 } from "motion/react";
+import Image from "next/image";
+import { useRef } from "react";
 
 /**
  * Hero principal
@@ -56,26 +56,24 @@ export function Hero() {
   };
 
   return (
-    <section
-      id="inicio"
-      ref={sectionRef}
-      className="relative isolate overflow-hidden"
-    >
-      <div className="relative h-[780px] w-full sm:h-[820px] lg:h-[680px]">
-        {/* Fondo de trigo con parallax */}
-        <motion.div
-          style={{ y: trigoY }}
-          className="absolute inset-0 -z-10"
-          aria-hidden="true"
-        >
-          <Image
-            src="/assets/fondo-trigo.svg"
-            alt=""
-            fill
-            priority
-            className="object-cover object-center"
-          />
-        </motion.div>
+    <section id="inicio" ref={sectionRef} className="relative">
+      <div className="relative h-[720px] w-full sm:h-[780px] lg:h-[720px] xl:h-[800px] 2xl:h-[860px]">
+        {/* Fondo de trigo con parallax — contenedor con overflow-hidden propio */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <motion.div
+            style={{ y: trigoY }}
+            className="absolute inset-0"
+            aria-hidden="true"
+          >
+            <Image
+              src="/assets/fondo-trigo.svg"
+              alt=""
+              fill
+              priority
+              className="object-cover object-center"
+            />
+          </motion.div>
+        </div>
 
         {/* Overlay sutil */}
         <div
@@ -172,41 +170,52 @@ export function Hero() {
           <Image
             src="/assets/personas-primera-seccion.svg"
             alt="Emprendedores agrícolas"
-            width={782}
-            height={1023}
-            className="h-auto w-[340px] sm:w-[420px] md:w-[540px] lg:w-[680px] xl:w-[760px]"
+            width={958}
+            height={577}
+            className="h-auto w-[360px] sm:w-[460px] md:w-[600px] lg:w-[780px] xl:w-[940px] 2xl:w-[1100px]"
             priority
           />
         </motion.div>
 
-        {/* Curva morada inferior */}
-        {/* <div
-          className="absolute inset-x-0 bottom-0 z-20 h-20 bg-brand-purple sm:h-24 md:h-28"
-          style={{ clipPath: "ellipse(60% 100% at 50% 0%)" }}
+        {/* Curva morada inferior — línea delgada con forma de "U" que cierra el hero */}
+        <svg
+          viewBox="0 0 1440 300"
+          preserveAspectRatio="none"
+          className="absolute inset-x-0 bottom-0 z-20 h-28 w-full sm:h-32 md:h-40 lg:h-48"
           aria-hidden="true"
-        /> */}
+        >
+          {/* Área blanca debajo de la curva — tapa el fondo de trigo para crear el corte */}
+          <path d="M0,300 L0,30 Q720,400 1440,30 L1440,300 Z" fill="white" />
+          {/* Línea delgada morada sobre la curva */}
+          <path
+            d="M0,30 Q720,400 1440,30"
+            fill="none"
+            stroke="#802581"
+            strokeWidth="15"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
 
-        {/* Panadera central — encaja en el hueco entre los laterales */}
+      {/* Panadera central — fuera del contenedor con h-fija para poder extenderse debajo */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-[-35px] z-30 flex justify-center sm:bottom-[-45px] md:bottom-[-60px] lg:bottom-[-80px] xl:bottom-[-100px] 2xl:bottom-[-135px]">
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           style={{ y: panaderaY }}
-          className="absolute bottom-0 left-1/2 z-30 -translate-x-1/2 translate-y-[15%]"
+          className="pointer-events-auto"
         >
           <Image
             src="/assets/panadera-central.svg"
             alt="Chef panadera con panes de masa madre"
-            width={996}
-            height={1351}
-            className="h-auto w-[200px] sm:w-[260px] md:w-[340px] lg:w-[440px] xl:w-[500px]"
+            width={480}
+            height={658}
+            className="h-auto w-[150px] sm:w-[190px] md:w-[245px] lg:w-[315px] xl:w-[380px] 2xl:w-[445px]"
             priority
           />
         </motion.div>
       </div>
-
-      {/* Base morada — continúa debajo para alojar a la panadera */}
-      {/* <div className="h-24 bg-brand-purple sm:h-28 md:h-32" aria-hidden="true" />       */}
     </section>
   );
 }
