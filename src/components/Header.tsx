@@ -12,6 +12,18 @@ const NAV_LINKS = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string>("#inicio");
+
+  // Detectar qué ítem está activo según el hash de la URL
+  useEffect(() => {
+    const updateActive = () => {
+      const hash = window.location.hash;
+      if (hash) setActive(hash);
+    };
+    updateActive();
+    window.addEventListener("hashchange", updateActive);
+    return () => window.removeEventListener("hashchange", updateActive);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -27,8 +39,15 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="relative w-full bg-brand-green">
-      <div className="container-site flex h-20 items-center justify-between gap-4">
+    <header className="relative w-full overflow-hidden bg-brand-greenDark">
+      {/* Fondo decorativo de hojas/trigo sobre el verde */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100 mix-blend-multiply"
+        style={{ backgroundImage: "url('/assets/TrigoFondoBar.png')" }}
+        aria-hidden="true"
+      />
+
+      <div className="container-site relative z-10 flex h-20 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3" aria-label="Inicio">
           <Image
             src="/assets/logo-sena-menu.svg"
@@ -50,23 +69,38 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
-          <ul className="flex items-center gap-5">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
-                >
-                  <Image src={link.icon} alt="" width={22} height={22} className="h-5 w-5" />
-                  <span>{link.label}</span>
-                </Link>
-              </li>
-            ))}
+          <ul className="flex items-center gap-3">
+            {NAV_LINKS.map((link) => {
+              const isActive = active === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setActive(link.href)}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                      isActive
+                        ? "bg-brand-greenDarkMenu text-white shadow-md "
+                        : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <Image src={link.icon} alt="" width={22} height={22} className="h-5 w-5" />
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <Link
             href="#puntos-aliados"
-            className="inline-flex items-center gap-2 rounded-full bg-brand-purple px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-purple-mid hover:shadow-md"
+            onClick={() => setActive("#puntos-aliados")}
+            aria-current={active === "#puntos-aliados" ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition ${
+              active === "#puntos-aliados"
+                ? "bg-brand-purpleDark shadow-md"
+                : "bg-brand-purple hover:bg-brand-purple-mid hover:shadow-md"
+            }`}
           >
             <Image src="/assets/icono-colombia-menu.svg" alt="" width={18} height={24} className="h-5 w-auto" />
             <span>Puntos Aliados Masa Madre</span>
@@ -99,15 +133,22 @@ export function Header() {
       {open && (
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
 
           <div
             id="mobile-menu"
-            className="absolute right-0 top-0 flex h-full w-[85%] max-w-sm animate-slide-in-right flex-col overflow-hidden rounded-l-[2rem] bg-brand-green shadow-2xl"
+            className="absolute left-0 top-0 flex h-full w-[85%] max-w-sm animate-slide-in-left flex-col overflow-hidden rounded-r-[2rem] bg-brand-greenDark shadow-2xl"
           >
+            {/* Fondo decorativo de hojas/trigo (rotado 180° para variar respecto al header) */}
+            <div
+              className="pointer-events-none absolute inset-0 rotate-180 bg-cover bg-center bg-no-repeat opacity-100 mix-blend-multiply"
+              style={{ backgroundImage: "url('/assets/TrigoFondoBar.png')" }}
+              aria-hidden="true"
+            />
+
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -142,23 +183,42 @@ export function Header() {
               </div>
 
               <ul className="mt-10 flex flex-col gap-3">
-                {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-full bg-brand-green-dark/40 px-5 py-3 text-base font-semibold text-white transition hover:bg-brand-green-dark/60"
-                    >
-                      <Image src={link.icon} alt="" width={22} height={22} className="h-6 w-6" />
-                      <span>{link.label}</span>
-                    </Link>
-                  </li>
-                ))}
+                {NAV_LINKS.map((link) => {
+                  const isActive = active === link.href;
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        onClick={() => {
+                          setActive(link.href);
+                          setOpen(false);
+                        }}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`flex items-center gap-3 rounded-full px-5 py-3 text-base font-semibold text-white transition ${
+                          isActive
+                            ? "bg-brand-greenDarkMenu shadow-md"
+                            : "hover:bg-brand-greenDark/40"
+                        }`}
+                      >
+                        <Image src={link.icon} alt="" width={22} height={22} className="h-6 w-6" />
+                        <span>{link.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
                 <li className="mt-2">
                   <Link
                     href="#puntos-aliados"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-full bg-brand-purple px-5 py-3 text-base font-semibold text-white shadow-md transition hover:bg-brand-purple-mid"
+                    onClick={() => {
+                      setActive("#puntos-aliados");
+                      setOpen(false);
+                    }}
+                    aria-current={active === "#puntos-aliados" ? "page" : undefined}
+                    className={`flex items-center gap-3 rounded-full px-5 py-3 text-base font-semibold text-white shadow-md transition ${
+                      active === "#puntos-aliados"
+                        ? "bg-brand-purpleDark"
+                        : "bg-brand-purple hover:bg-brand-purple-mid"
+                    }`}
                   >
                     <Image
                       src="/assets/icono-colombia-menu.svg"

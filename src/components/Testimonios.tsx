@@ -38,7 +38,7 @@ const TESTIMONIOS: Testimonio[] = [
  */
 export function Testimonios() {
   return (
-    <section id="historia" className="bg-white py-20 md:py-24">
+    <section id="historia" className="bg-white py-40 md:py-40">
       {/* Desktop: grid estático */}
       <div className="container-site hidden md:block">
         <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6">
@@ -88,7 +88,7 @@ function CarruselMovil() {
       {/* Track deslizable */}
       <div
         ref={trackRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-2 pb-10 pt-16 [&::-webkit-scrollbar]:hidden"
         style={{ scrollbarWidth: "none" }}
       >
         {/* Espaciador izquierdo para que la primera tarjeta quede centrada */}
@@ -130,45 +130,40 @@ function CarruselMovil() {
 
 function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
   return (
-    <article className="relative mx-auto w-full max-w-sm pt-4">
+    <article className="relative mx-auto w-full max-w-sm pl-14 pt-14 md:pl-16 md:pt-16">
       <div className="relative">
-        {/* Fondo orgánico verde (SVG) */}
-        <Image
-          src="/assets/fondo-historia.svg"
-          alt=""
-          width={420}
-          height={520}
-          className="pointer-events-none h-auto w-full select-none"
-          aria-hidden="true"
-        />
-
-        {/* Contenido superpuesto */}
-        <div className="absolute inset-0 flex flex-col px-6 pb-12 pt-6 md:px-7">
-          {/* Header: foto + nombre lado a lado */}
-          <div className="flex items-center gap-4">
-            <div className="relative h-24 w-24 flex-shrink-0 -translate-x-2 -translate-y-6 overflow-hidden rounded-full border-[5px] border-white shadow-lg md:h-28 md:w-28">
-              <Image
-                src="/assets/foto-redonda-historia.svg"
-                alt={nombre}
-                width={120}
-                height={120}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-bold italic leading-tight text-support-navy md:text-2xl">
-              {nombre}
-            </h3>
-          </div>
+        {/* Rectángulo de fondo verde claro con esquinas cóncavas (mordiscos circulares) */}
+        <div
+          className="min-h-[340px] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[380px] md:px-10 md:pt-20"
+          style={{
+            WebkitMaskImage: `
+              radial-gradient(circle 80px at 0% 0%, transparent 98%, black 100%),
+              radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
+              linear-gradient(black, black)
+            `,
+            WebkitMaskComposite: "source-in",
+            maskImage: `
+              radial-gradient(circle 80px at 0% 0%, transparent 98%, black 100%),
+              radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
+              linear-gradient(black, black)
+            `,
+            maskComposite: "intersect",
+          }}
+        >
+          {/* Nombre - alineado a la derecha del mordisco */}
+          <h3 className="pl-10 text-xl font-bold italic  text-support-navy md:pl- md:text-2xl">
+            {nombre}
+          </h3>
 
           {/* Cita */}
-          <p className="mt-2 text-sm leading-relaxed text-support-navy md:text-[15px]">
+          <p className="mt-6 text-sm leading-none text-support-navy md:text-[15px]">
             <span className="text-support-navy">“</span>
             {cita}
             <span className="text-support-navy">”</span>
           </p>
 
           {/* Meta: ubicación */}
-          <div className="mt-auto flex items-start gap-2 pt-4">
+          <div className="mt-6 flex items-start gap-2">
             <Image
               src="/assets/ubicacion-historia.svg"
               alt=""
@@ -182,10 +177,21 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
           </div>
         </div>
 
-        {/* Ícono circular verde abajo a la derecha */}
+        {/* Foto circular - ~mitad fuera del rectángulo por la izquierda y arriba */}
+        <div className="absolute -left-14 -top-14 h-28 w-28 overflow-hidden rounded-full border-[5px] border-white shadow-lg md:-left-16 md:-top-16 md:h-32 md:w-32">
+          <Image
+            src="/assets/foto-redonda-historia.svg"
+            alt={nombre}
+            width={128}
+            height={128}
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        {/* Ícono circular verde - ~mitad fuera del rectángulo por la derecha y abajo */}
         <button
           type="button"
-          className="absolute -bottom-2 right-4 flex h-14 w-14 items-center justify-center transition hover:scale-105"
+          className="absolute -bottom-10 -right-1 flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-105"
           aria-label={`Ver historia de ${nombre}`}
         >
           <Image

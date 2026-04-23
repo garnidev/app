@@ -11,9 +11,9 @@ export function PuntosAliados() {
   return (
     <section
       id="puntos-aliados"
-      className="relative overflow-hidden bg-white pb-28 pt-20 md:pb-36 md:pt-28"
+      className="relative overflow-hidden bg-white pb-20 pt-0 md:pb-8 md:pt-0"
     >
-      <div className="container-site grid items-center gap-10 lg:grid-cols-2">
+      <div className="container-site grid items-center gap-10 lg:grid-cols-[1fr_1.4fr]">
         {/* Columna izquierda - texto (arriba en móvil) */}
         <div className="text-center lg:text-left">
           <h2 className="text-4xl font-extrabold italic leading-none text-brand-green md:text-5xl lg:text-6xl">
@@ -51,13 +51,13 @@ export function PuntosAliados() {
 
         {/* Columna derecha - mapa (abajo en móvil, derecha en desktop) */}
         <div className="flex justify-center lg:justify-end">
-          <div className="animate-seal-float">
+          <div className="animate-seal-float w-full max-w-[500px] lg:max-w-[840px]">
             <Image
               src="/assets/mapa-puntos-aliados.svg"
               alt="Mapa de panaderías aliadas en Colombia"
-              width={600}
-              height={495}
-              className="h-auto w-full max-w-[500px] drop-shadow-2xl lg:max-w-[600px]"
+              width={840}
+              height={693}
+              className="h-auto w-full drop-shadow-2xl"
             />
           </div>
         </div>

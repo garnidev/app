@@ -88,7 +88,8 @@ export function Hero() {
             variants={tituloContainer}
             initial="hidden"
             animate="visible"
-            className="z-10 text-center text-3xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl"
+            className="z-10 text-center text-3xl font-bold leading-tight text-white sm:text-4xl"
+            style={{ textShadow: "0 4px 4px rgba(0, 0, 0, 0.44)" }}
           >
             <motion.span variants={tituloItem} className="block">
               ¡<span className="font-bold">Tradición</span>{" "}
@@ -113,7 +114,7 @@ export function Hero() {
                 alt="Sabores que fermentan nuestra tierra"
                 width={310}
                 height={286}
-                className="h-[200px] w-auto drop-shadow-xl sm:h-[240px]"
+                className="h-[230px] w-auto drop-shadow-xl sm:h-[260px]"
                 priority
               />
             </div>
@@ -127,7 +128,8 @@ export function Hero() {
             variants={tituloContainer}
             initial="hidden"
             animate="visible"
-            className="absolute left-1/2 top-14 z-10 -translate-x-[55%] text-center text-5xl font-bold leading-tight text-white drop-shadow-lg"
+            className="absolute left-1/2 top-14 z-10 -translate-x-[55%] text-center text-6xl font-bold leading-tight text-white"
+            style={{ textShadow: "0 4px 4px rgba(0, 0, 0, 0.44)" }}
           >
             <motion.span variants={tituloItem} className="block">
               ¡<span className="font-bold">Tradición</span>{" "}
@@ -144,7 +146,7 @@ export function Hero() {
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
-            className="absolute right-6 top-8 z-20 xl:right-12"
+            className="absolute right-6 top-20 z-20 xl:right-20"
           >
             <div className={shouldReduceMotion ? "" : "animate-seal-float"}>
               <Image
@@ -152,7 +154,7 @@ export function Hero() {
                 alt="Sabores que fermentan nuestra tierra"
                 width={310}
                 height={286}
-                className="h-[180px] w-auto drop-shadow-xl xl:h-[220px]"
+                className="h-[190px] w-auto drop-shadow-xl xl:h-[310px]"
                 priority
               />
             </div>
@@ -165,14 +167,14 @@ export function Hero() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          className="absolute inset-x-0 bottom-2 z-10 flex items-end justify-center sm:bottom-1 md:bottom-0 lg:bottom-0"
+          className="absolute inset-x-0 bottom-12 z-10 flex items-end justify-center sm:bottom-1 md:bottom-0 lg:bottom-0"
         >
           <Image
             src="/assets/personas-primera-seccion.svg"
             alt="Emprendedores agrícolas"
             width={958}
             height={577}
-            className="h-auto w-[360px] sm:w-[460px] md:w-[600px] lg:w-[780px] xl:w-[940px] 2xl:w-[1100px]"
+            className="h-auto w-[660px] sm:w-[5010px] md:w-[670px] lg:w-[900px] xl:w-[1100px] 2xl:w-[1300px]"
             priority
           />
         </motion.div>
@@ -198,7 +200,7 @@ export function Hero() {
       </div>
 
       {/* Panadera central — fuera del contenedor con h-fija para poder extenderse debajo */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-[-25px] z-30 flex justify-center sm:bottom-[-35px] md:bottom-[-55px] lg:bottom-[-100px] xl:bottom-[-120px] 2xl:bottom-[-180px]">
+      <div className="pointer-events-none absolute inset-x-0 bottom-[-60px] z-30 flex justify-center sm:bottom-[-35px] md:bottom-[-55px] lg:bottom-[-100px] xl:bottom-[-120px] 2xl:bottom-[-180px]">
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           animate={{ opacity: 1, y: 0 }}
@@ -211,7 +213,7 @@ export function Hero() {
             alt="Chef panadera con panes de masa madre"
             width={480}
             height={658}
-            className="h-auto w-[150px] sm:w-[190px] md:w-[255px] lg:w-[335px] xl:w-[405px] 2xl:w-[475px]"
+            className="h-auto w-[215px] sm:w-[280px] md:w-[290px] lg:w-[425px] xl:w-[475px] 2xl:w-[600px]"
             priority
           />
         </motion.div>

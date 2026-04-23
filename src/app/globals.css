@@ -48,9 +48,11 @@
 /* Base */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
+  overflow-x: hidden;
   color: var(--color-neutral-800);
   background: #ffffff;
   font-family: var(--font-work-sans), system-ui, sans-serif;
@@ -109,6 +111,19 @@ body {
   animation: slideInRight 0.3s ease-out both;
 }
 
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out both;
+}
+
 /* Splash screen */
 @keyframes logoPulse {
   0%, 100% {
@@ -139,6 +154,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-seal-float,
   .animate-slide-in-right,
+  .animate-slide-in-left,
   .animate-logo-pulse,
   .animate-progress-bar {
     animation: none;

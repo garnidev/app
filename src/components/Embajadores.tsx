@@ -16,7 +16,7 @@ const CHIPS = [
  */
 export function Embajadores() {
   return (
-    <section className="relative overflow-hidden bg-brand-purpleDark py-16 md:py-20">
+    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-20 md:pt-6">
       <div className="container-site">
         <div className="flex flex-col items-center gap-8 lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
           {/* Columna de texto (segunda en móvil, primera en desktop) */}
@@ -77,7 +77,15 @@ export function Embajadores() {
           <div className="relative order-1 flex -mt-20 justify-center lg:order-2 lg:mt-0 lg:justify-end">
             <div className="relative h-[320px] w-[320px] sm:h-[380px] sm:w-[380px] md:h-[460px] md:w-[460px] lg:h-[500px] lg:w-[500px]">
               {/* Círculo de fondo con borde blanco */}
-              <div className="absolute inset-0 overflow-hidden rounded-full border-[6px] border-white md:border-8">
+              <div
+                className="
+                absolute rounded-full border-[20px] border-white bg-white
+                left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2
+                sm:left-1/2 sm:top-1/2 sm:h-[300px] sm:w-[300px] sm:border-[20px] border-white bg-white
+                md:left-1/2 md:top-1/2 md:h-[00px] md:w-[00px] md:border-8 lg:border-[20px] border-white bg-white
+                lg:top-[20%] lg:h-[350px] lg:w-[350px] lg:border-[30px] border-white bg-white
+                "
+              >
                 <Image
                   src="/assets/fondo-foto-embajadores.svg"
                   alt=""
@@ -93,7 +101,13 @@ export function Embajadores() {
                 alt="Embajadora de la masa madre"
                 width={560}
                 height={640}
-                className="absolute bottom-0 left-1/2 z-10 h-[115%] w-auto max-w-none -translate-x-1/2 object-contain"
+                className="
+                absolute z-10 w-auto max-w-none object-contain -translate-x-1/2
+                bottom-2 left-[52%] h-[100%]
+                sm:bottom-4 sm:left-[52%] sm:h-[10%]
+                md:bottom-4 md:left-[55%] md:h-[10%]
+                lg:bottom-60 lg:left-[55%] lg:h-[80%]
+                "
                 priority={false}
               />
             </div>
