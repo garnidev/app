@@ -10,7 +10,10 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Masa Madre · Tradición que nutre, técnica que transforma | SENA",
+  title: {
+    default: "Masa Madre | SENA",
+    template: "%s | Masa Madre SENA",
+  },
   description:
     "Portal de panaderías aliadas con masa madre. Iniciativa del SENA, CampeSENA y Full Popular para promover la tradición ancestral del pan artesanal en Colombia.",
   keywords: [
@@ -31,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={workSans.variable}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

@@ -2,29 +2,37 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
-  { href: "#inicio", label: "Inicio", icon: "/assets/icono-inicio-menu.svg" },
-  { href: "#blog", label: "Blog", icon: "/assets/icono-blog-menu.svg" },
-  { href: "#soporte", label: "Soporte", icon: "/assets/icono-soporte-menu.svg" },
+  { href: "/", label: "Inicio", icon: "/assets/icono-inicio-menu.svg" },
+  { href: "/blog", label: "Blog", icon: "/assets/icono-blog-menu.svg" },
+  { href: "/login", label: "Soporte", icon: "/assets/icono-soporte-menu.svg" },
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState<string>("#inicio");
 
-  // Detectar qué ítem está activo según el hash de la URL
-  useEffect(() => {
-    const updateActive = () => {
-      const hash = window.location.hash;
-      if (hash) setActive(hash);
-    };
-    updateActive();
-    window.addEventListener("hashchange", updateActive);
-    return () => window.removeEventListener("hashchange", updateActive);
-  }, []);
+  /**
+   * Determina si un link está activo comparando su href con la ruta actual.
+   * - "/"              → activo solo si pathname es exactamente "/"
+   * - "/#seccion"      → activo si estamos en "/" (la sección vive en el home)
+   * - "/blog", etc.    → activo si pathname empieza con esa ruta
+   *                      (así /blog/algun-post también marca "Blog" como activo)
+   */
+  const isActive = (href: string): boolean => {
+  // Links de sección con hash no se marcan activos automáticamente
+  // (Inicio ocupa ese rol en el home)
+  if (href.startsWith("/#")) return false;
+  // Home exacto
+  if (href === "/") return pathname === "/";
+  // Rutas normales (/blog, /blog/algun-post, etc.)
+  return pathname.startsWith(href);
+};
 
+  // Bloquea el scroll del body y cierra con ESC cuando el menú móvil está abierto
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -71,15 +79,14 @@ export function Header() {
         <nav className="hidden items-center gap-6 md:flex">
           <ul className="flex items-center gap-3">
             {NAV_LINKS.map((link) => {
-              const isActive = active === link.href;
+              const activo = isActive(link.href);
               return (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    onClick={() => setActive(link.href)}
-                    aria-current={isActive ? "page" : undefined}
+                    aria-current={activo ? "page" : undefined}
                     className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                      isActive
+                      activo
                         ? "bg-brand-greenDarkMenu text-white shadow-md "
                         : "text-white hover:bg-white/10"
                     }`}
@@ -93,14 +100,9 @@ export function Header() {
           </ul>
 
           <Link
-            href="#puntos-aliados"
-            onClick={() => setActive("#puntos-aliados")}
-            aria-current={active === "#puntos-aliados" ? "page" : undefined}
-            className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition ${
-              active === "#puntos-aliados"
-                ? "bg-brand-purpleDark shadow-md"
-                : "bg-brand-purple hover:bg-brand-purple-mid hover:shadow-md"
-            }`}
+            href="/#puntos-aliados"
+            aria-current={pathname === "/" ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition bg-brand-purple hover:bg-brand-purple-mid hover:shadow-md`}
           >
             <Image src="/assets/icono-colombia-menu.svg" alt="" width={18} height={24} className="h-5 w-auto" />
             <span>Puntos Aliados Masa Madre</span>
@@ -184,18 +186,15 @@ export function Header() {
 
               <ul className="mt-10 flex flex-col gap-3">
                 {NAV_LINKS.map((link) => {
-                  const isActive = active === link.href;
+                  const activo = isActive(link.href);
                   return (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        onClick={() => {
-                          setActive(link.href);
-                          setOpen(false);
-                        }}
-                        aria-current={isActive ? "page" : undefined}
+                        onClick={() => setOpen(false)}
+                        aria-current={activo ? "page" : undefined}
                         className={`flex items-center gap-3 rounded-full px-5 py-3 text-base font-semibold text-white transition ${
-                          isActive
+                          activo
                             ? "bg-brand-greenDarkMenu shadow-md"
                             : "hover:bg-brand-greenDark/40"
                         }`}
@@ -208,17 +207,9 @@ export function Header() {
                 })}
                 <li className="mt-2">
                   <Link
-                    href="#puntos-aliados"
-                    onClick={() => {
-                      setActive("#puntos-aliados");
-                      setOpen(false);
-                    }}
-                    aria-current={active === "#puntos-aliados" ? "page" : undefined}
-                    className={`flex items-center gap-3 rounded-full px-5 py-3 text-base font-semibold text-white shadow-md transition ${
-                      active === "#puntos-aliados"
-                        ? "bg-brand-purpleDark"
-                        : "bg-brand-purple hover:bg-brand-purple-mid"
-                    }`}
+                    href="/#puntos-aliados"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-full bg-brand-purple px-5 py-3 text-base font-semibold text-white shadow-md transition hover:bg-brand-purple-mid"
                   >
                     <Image
                       src="/assets/icono-colombia-menu.svg"

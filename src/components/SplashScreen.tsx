@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect,  useState } from "react";
 
 /**
  * Splash screen temático masa madre
@@ -39,19 +39,7 @@ export function SplashScreen() {
     };
   }, []);
 
-  // Partículas de harina - posiciones aleatorias pero estables entre renders
-  const particulas = useMemo(
-    () =>
-      Array.from({ length: 18 }, (_, i) => ({
-        left: Math.random() * 100,
-        delay: Math.random() * 2,
-        duration: 3 + Math.random() * 3,
-        size: 2 + Math.random() * 4,
-        opacity: 0.3 + Math.random() * 0.5,
-      })),
-    []
-  );
-
+  
   if (!visible) return null;
 
   return (
