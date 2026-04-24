@@ -21,7 +21,6 @@ export function EditorBubbleMenu({ editor }: Props) {
   return (
     <BubbleMenu
       editor={editor}
-      tippyOptions={{ duration: 150, placement: "top" }}
       shouldShow={({ editor, from, to }) => {
         // Solo mostrar si hay selección real y no estamos en un code block
         const tieneSeleccion = from !== to;
