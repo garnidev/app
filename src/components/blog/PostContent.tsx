@@ -25,7 +25,10 @@ export function PostContent({ lead, contenido }: Props) {
 
       {/* Cuerpo del artículo en Markdown */}
       <div className="mt-8 md:mt-10">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={markdownComponents}
+        >
           {contenido}
         </ReactMarkdown>
       </div>
@@ -40,7 +43,7 @@ export function PostContent({ lead, contenido }: Props) {
 const markdownComponents: Components = {
   /* Párrafos */
   p: ({ children }) => (
-    <p className="mb-5 text-sm leading-relaxed text-neutral-700 md:text-[15px] md:leading-[1.75]">
+    <p className="mb-5 text-base leading-relaxed text-neutral-700 md:text-[16px] md:leading-[1.15]">
       {children}
     </p>
   ),
@@ -67,11 +70,7 @@ const markdownComponents: Components = {
      - Segundo párrafo en adelante (autor/atribución) → gris, normal */
   blockquote: ({ children }) => (
     <div className="my-6 rounded-xl bg-brand-greenSoft px-6 py-5 text-center md:px-8 md:py-6">
-      <div
-        className="text-sm leading-relaxed md:text-base
-          [&>p:first-child]:font-bold [&>p:first-child]:italic [&>p:first-child]:text-brand-greenDark [&>p:first-child]:mb-2
-          [&>p:not(:first-child)]:text-neutral-600 [&>p:not(:first-child)]:text-sm"
-      >
+      <div className="leading-relaxed text-brand-greenDark [&>p:first-child]:text-base [&>p:first-child]:font-bold [&>p:first-child]:italic [&>p:first-child]:md:text-lg [&>p:last-child]:mt-3 [&>p:last-child]:text-xs [&>p:last-child]:font-semibold [&>p:last-child]:uppercase [&>p:last-child]:tracking-wider [&>p:last-child]:text-neutral-600 [&>p:last-child]:not-italic">
         {children}
       </div>
     </div>
@@ -88,8 +87,8 @@ const markdownComponents: Components = {
 
   /* Enlaces */
   a: ({ children, href }) => (
-    
-      <a href={href ?? "#"}
+    <a
+      href={href ?? "#"}
       className="font-semibold text-brand-purple underline decoration-brand-purple/40 underline-offset-2 transition hover:decoration-brand-purple"
       target={href?.startsWith("http") ? "_blank" : undefined}
       rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
@@ -100,12 +99,12 @@ const markdownComponents: Components = {
 
   /* Listas */
   ul: ({ children }) => (
-    <ul className="mb-5 ml-5 list-disc space-y-2 text-sm text-neutral-700 md:text-[15px]">
+    <ul className="mb-5 ml-5 list-disc space-y-2 text-sm text-neutral-700 md:text-[16px]">
       {children}
     </ul>
   ),
   ol: ({ children }) => (
-    <ol className="mb-5 ml-5 list-decimal space-y-2 text-sm text-neutral-700 md:text-[15px]">
+    <ol className="mb-5 ml-5 list-decimal space-y-2 text-sm text-neutral-700 md:text-[16px]">
       {children}
     </ol>
   ),

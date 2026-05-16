@@ -11,7 +11,7 @@ export function PuntosAliados() {
   return (
     <section
       id="puntos-aliados"
-      className="relative overflow-hidden bg-white pb-20 pt-0 md:pb-8 md:pt-0"
+      className="relative overflow-hidden bg-white pb-20 pt-0 md:pb-16 md:pt-0"
     >
       <div className="container-site grid items-center gap-10 lg:grid-cols-[1fr_1.4fr]">
         {/* Columna izquierda - texto (arriba en móvil) */}
@@ -20,7 +20,7 @@ export function PuntosAliados() {
             Puntos aliados
           </h2>
 
-          <p className="mt-3 text-lg font-bold italic text-gov-blue md:text-xl">
+          <p className="mt-3 text-lg font-bold italic text-[#002c46] md:text-xl">
             Aquí esta tu próxima panadería favorita.
           </p>
 
@@ -51,7 +51,7 @@ export function PuntosAliados() {
 
         {/* Columna derecha - mapa (abajo en móvil, derecha en desktop) */}
         <div className="flex justify-center lg:justify-end">
-          <div className="animate-seal-float w-full max-w-[500px] lg:max-w-[840px]">
+          <div className=" w-full max-w-[500px] lg:max-w-[840px]">
             <Image
               src="/assets/mapa-puntos-aliados.svg"
               alt="Mapa de panaderías aliadas en Colombia"

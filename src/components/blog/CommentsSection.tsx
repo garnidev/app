@@ -50,7 +50,7 @@ export function CommentsSection({ comentariosIniciales }: Props) {
   return (
     <section className="mx-auto mt-12 max-w-3xl md:mt-16">
       {/* Encabezado */}
-      <h2 className="flex items-center gap-3 text-xl font-bold italic text-neutral-900 md:text-2xl">
+      <h2 className="flex items-center gap-3 text-xl font-bold italic text-blueDark md:text-2xl">
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-greenSoft">
           <svg
             viewBox="0 0 24 24"
@@ -185,45 +185,43 @@ function CommentCard({ comentario }: { comentario: Comentario }) {
       : comentario.texto;
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-black/5 md:p-6">
-      <div className="flex items-start gap-4">
-        {/* Avatar */}
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-brand-greenSoft ring-2 ring-brand-green/30">
-          <Image
-            src={comentario.avatar}
-            alt={`Avatar de ${comentario.autor}`}
-            fill
-            sizes="48px"
-            className="object-cover"
-          />
-        </div>
-
-        {/* Contenido */}
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h4 className="text-sm font-bold italic text-neutral-900 md:text-base">
-              {comentario.autor}
-            </h4>
-            <span className="text-xs italic text-neutral-500">
-              {formatearFechaComentario(comentario.fechaISO)}
-            </span>
-          </div>
-
-          <p className="mt-1.5 text-sm leading-relaxed text-neutral-700">
-            {textoVisible}
-          </p>
-
-          {esLargo && (
-            <button
-              type="button"
-              onClick={() => setExpandido((v) => !v)}
-              className="mt-2 text-xs font-semibold text-brand-purple hover:text-brand-purpleDark md:text-sm"
-            >
-              {expandido ? "Ver menos" : "Ver más"}
-            </button>
-          )}
-        </div>
+    <div className="relative ml-10 rounded-2xl bg-white p-5 pl-16 shadow-soft ring-1 ring-black/5 md:ml-12 md:p-6 md:pl-20">
+      {/* Avatar — sobresale por la esquina superior izquierda */}
+      <div className="absolute -left-10 -top-1 h-20 w-20 overflow-hidden rounded-full bg-brand-greenSoft ring-4 ring-brand-green/40 md:-left-18 md:h-15 md:w-15">
+        <Image
+          src={comentario.avatar}
+          alt={`Avatar de ${comentario.autor}`}
+          fill
+          sizes="96px"
+          className="object-cover"
+        />
       </div>
+
+      {/* Contenido */}
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h4 className="text-base font-bold italic text-support-navy md:text-lg">
+          {comentario.autor}
+        </h4>
+        <span className="text-xs italic text-neutral-500">
+          {formatearFechaComentario(comentario.fechaISO)}
+        </span>
+      </div>
+
+      <p className="mt-1.5 text-sm leading-relaxed text-neutral-700 md:text-base">
+        {textoVisible}
+      </p>
+
+      {esLargo && (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setExpandido((v) => !v)}
+            className="text-xs font-semibold text-brand-green hover:text-brand-purpleDark md:text-sm"
+          >
+            {expandido ? "Ver menos" : "Ver más"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -278,12 +276,27 @@ function InputConIcono({
 /* ─── Formato de fecha para comentarios ───────────────────────────── */
 
 const DIAS = [
-  "Domingo", "Lunes", "Martes", "Miércoles",
-  "Jueves", "Viernes", "Sábado",
+  "Domingo",
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
 ];
 const MESES = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];
 
 function formatearFechaComentario(iso: string): string {

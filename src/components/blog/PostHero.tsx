@@ -56,24 +56,32 @@ export function PostHero({ post }: { post: PostDetalle }) {
           </Link>
         </div>
 
-        {/* Píldora dorada con la keyword */}
+        {/* Píldora dorada con la keyword (SVG adaptativo de fondo) */}
         <div className="mt-4 flex justify-center">
-          <div
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-[#E6B052] to-[#A67226] px-5 py-2.5 shadow-lg ring-1 ring-[#8B5E1F]/40"
-            style={{
-              boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.25)",
-            }}
-          >
+          <div className="relative inline-flex items-center gap-2 px-7 py-3">
+            {/* SVG de fondo — independiente del contenido */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{
+                width: "180px",
+                height: "200px",
+                backgroundImage: "url('/assets/boton-dorado.svg')",
+                backgroundSize: "100% 100%",
+                backgroundRepeat: "no-repeat",
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Contenido (sigue su tamaño natural) */}
             <Image
               src="/assets/icono-panadero-menu.svg"
               alt=""
               width={22}
               height={22}
-              className="h-5 w-5 brightness-0"
+              className="relative z-10 h-5 w-5 brightness-0"
               aria-hidden="true"
             />
-            <span className="text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-900">
+            <span className="relative z-10 text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-900">
               {post.keyword}
             </span>
           </div>
@@ -87,30 +95,56 @@ export function PostHero({ post }: { post: PostDetalle }) {
           {post.titulo}
         </h1>
 
-        {/* Metadata: fecha + tiempo de lectura */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-          <MetaItem
-            icon={
-              <>
+        {/* Metadata: fecha + tiempo de lectura (una sola cápsula) */}
+        <div className="mt-6 flex justify-center">
+          <span className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-black/25 px-5 py-2 text-sm text-white backdrop-blur-sm md:gap-x-6">
+            {/* Fecha */}
+            <span className="inline-flex items-center gap-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
-              </>
-            }
-            label="Fecha de publicación:"
-            value={fecha}
-          />
-          <MetaItem
-            icon={
-              <>
+              </svg>
+              <span>
+                <span className="hidden md:inline">Fecha de publicación: </span>
+                <span className="font-bold">{fecha}</span>
+              </span>
+            </span>
+
+            {/* Separador vertical */}
+            <span className="h-4 w-px bg-white/30" aria-hidden="true" />
+
+            {/* Tiempo de lectura */}
+            <span className="inline-flex items-center gap-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
-              </>
-            }
-            label="Tiempo de lectura:"
-            value={`${post.tiempoLecturaMin} min`}
-          />
+              </svg>
+              <span>
+                <span className="hidden md:inline">Tiempo de lectura: </span>
+                <span className="font-bold">{post.tiempoLecturaMin} min</span>
+              </span>
+            </span>
+          </span>
         </div>
       </div>
 
@@ -121,10 +155,7 @@ export function PostHero({ post }: { post: PostDetalle }) {
         className="absolute inset-x-0 bottom-0 z-20 h-12 w-full sm:h-16 md:h-20 lg:h-24"
         aria-hidden="true"
       >
-        <path
-          d="M0,120 L0,40 Q360,100 720,40 T1440,40 L1440,120 Z"
-          fill="white"
-        />
+        <path d="M0,120 L0,0 Q720,180 1440,0 L1440,120 Z" fill="white" />
       </svg>
     </section>
   );
@@ -165,8 +196,18 @@ function MetaItem({
 /* ─── Utilidad para formato largo de fecha ────────────────────────── */
 
 const MESES_CORTO = [
-  "ene", "feb", "mar", "abr", "may", "jun",
-  "jul", "ago", "sep", "oct", "nov", "dic",
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
 ];
 
 function formatearFechaLarga(iso: string): string {

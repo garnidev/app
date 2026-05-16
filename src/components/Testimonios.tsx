@@ -12,21 +12,21 @@ type Testimonio = {
 
 const TESTIMONIOS: Testimonio[] = [
   {
-    nombre: "Jorge Ramírez",
+    nombre: "Jorge \n Ramírez",
     cita: "Empecé desde cero y aprender masa madre me dio identidad. Vendo algo hecho con tiempo y propósito.",
-    panaderia: "Emprendedora panadera",
+    panaderia: "Emprendedora \n panadera",
     ciudad: "Bogotá",
   },
   {
-    nombre: "María Fernanda",
+    nombre: "María \n Fernanda",
     cita: "Desde que empezamos a trabajar con masa madre, la gente lo nota. Nos dicen que el pan sabe como el de antes. Y eso, para mí, lo cambia todo.",
-    panaderia: "Panadería La Esquina del Trigo",
+    panaderia: "Panadería La Esquina \n del Trigo",
     ciudad: "Medellín",
   },
   {
-    nombre: "Jorge Ramírez",
+    nombre: "Jorge \n Ramírez",
     cita: "Pensé que era solo una tendencia, pero fue una decisión que transformó mi panadería. Ahora vendemos más.",
-    panaderia: "Panadería El Horno del Barrio",
+    panaderia: "Panadería El Horno \n del Barrio",
     ciudad: "Cali",
   },
 ];
@@ -38,7 +38,7 @@ const TESTIMONIOS: Testimonio[] = [
  */
 export function Testimonios() {
   return (
-    <section id="historia" className="bg-white py-40 md:py-40">
+    <section id="historia" className="bg-white py-16 md:py-30">
       {/* Desktop: grid estático */}
       <div className="container-site hidden md:block">
         <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6">
@@ -134,7 +134,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
       <div className="relative">
         {/* Rectángulo de fondo verde claro con esquinas cóncavas (mordiscos circulares) */}
         <div
-          className="min-h-[340px] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[380px] md:px-10 md:pt-20"
+          className="min-h-[300px] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[300px] md:px-10 md:pt-20"
           style={{
             WebkitMaskImage: `
               radial-gradient(circle 80px at 0% 0%, transparent 98%, black 100%),
@@ -151,7 +151,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
           }}
         >
           {/* Nombre - alineado a la derecha del mordisco */}
-          <h3 className="pl-10 text-xl font-bold italic  text-support-navy md:pl- md:text-2xl">
+          <h3 className="-mt-10 whitespace-pre-line pl-10 text-xl text-center font-bold italic leading-tight text-support-navy md:-mt-16 md:text-2xl">
             {nombre}
           </h3>
 
@@ -163,15 +163,15 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
           </p>
 
           {/* Meta: ubicación */}
-          <div className="mt-6 flex items-start gap-2">
+          <div className="mt-6 flex flex-col items-start gap-2">
             <Image
               src="/assets/ubicacion-historia.svg"
               alt=""
               width={16}
               height={16}
-              className="mt-0.5 h-4 w-4 flex-shrink-0"
+              className="h-4 w-4 flex-shrink-0"
             />
-            <p className="text-xs leading-tight text-neutral-600">
+            <p className="whitespace-pre-line text-xs leading-tight text-neutral-600">
               {panaderia} — {ciudad}
             </p>
           </div>
@@ -191,7 +191,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
         {/* Ícono circular verde - ~mitad fuera del rectángulo por la derecha y abajo */}
         <button
           type="button"
-          className="absolute -bottom-10 -right-1 flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-105"
+          className="absolute -bottom-7 -right-1 flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-105"
           aria-label={`Ver historia de ${nombre}`}
         >
           <Image

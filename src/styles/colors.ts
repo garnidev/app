@@ -28,6 +28,7 @@ export const colors = {
     greenDark: "#009E00",    // Verde oscuro (ícono historia)
     greenSoft: "#E6F5E6",    // Verde suave (fondo tarjetas testimonios)
     greenDarkMenu: "#005524", // Verde oscuro para menú (diferenciar del verde principal)    
+    blueDark: "#002c46",        // Azul oscuro SENA (textos destacados, íconos)
   },
 
   // ─── Gobierno de Colombia (gov.co) ──────────────────────────────────

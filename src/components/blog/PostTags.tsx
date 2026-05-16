@@ -10,16 +10,20 @@ type Props = {
  */
 export function PostTags({ tags }: Props) {
   return (
-    <div className="mx-auto mt-10 flex max-w-3xl flex-wrap justify-center gap-3 md:justify-start">
-      {tags.map((tag, idx) => (
-        <span
-          key={`${tag.label}-${idx}`}
-          className="inline-flex items-center gap-2 rounded-full border border-brand-purple/50 bg-brand-purple/10 px-5 py-2 text-xs font-semibold text-brand-purpleDark transition hover:bg-brand-purple/15 md:text-sm"
-        >
-          <TagIconSvg icon={tag.icon} />
-          <span>{tag.label}</span>
-        </span>
-      ))}
+    <div className="mx-auto mt-10 max-w-3xl border-y border-neutral-200 py-8">
+      <div className="flex flex-wrap justify-center gap-3 md:justify-start">
+        {tags.map((tag, idx) => (
+          <span
+            key={`${tag.label}-${idx}`}
+            className="inline-flex items-center gap-2 rounded-full border-2 border-brand-purpleDark bg-brand-purple/10 px-3 py-1.5 text-xs font-bold text-brand-purpleDark shadow-sm transition hover:bg-brand-purple/15 md:text-sm"
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-brand-purpleDark bg-white">
+              <TagIconSvg icon={tag.icon} />
+            </span>
+            <span>{tag.label}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

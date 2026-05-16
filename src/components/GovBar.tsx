@@ -6,8 +6,8 @@ import Image from "next/image";
  */
 export function GovBar() {
   return (
-    <div className="w-full bg-[#0943b5] py-1.5 px-4 flex items-center justify-center">
-      <div className="max-w-7xl w-full flex items-center gap-2">
+    <div className="w-full bg-[#0943b5] py-1.5">
+      <div className="container-site flex items-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://betowa.sena.edu.co/assets/logos/gov-logo-new.svg"

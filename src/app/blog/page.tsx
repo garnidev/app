@@ -62,7 +62,8 @@ export default function BlogPage() {
   const [orden, setOrden] = useState<Orden>("recientes");
   const [ordenAbierto, setOrdenAbierto] = useState(false);
   const [busqueda, setBusqueda] = useState("");
-  const [filtroActivo, setFiltroActivo] = useState(true); // controla la pill de "Más recientes"
+  const [busquedaAbierta, setBusquedaAbierta] = useState(false);
+  const [filtroActivo, setFiltroActivo] = useState(false); // controla la pill de "Más recientes"
 
   /* ─── Derivados: lista filtrada y ordenada ───────────────────────── */
   const postsFiltrados = useMemo(() => {
@@ -111,7 +112,7 @@ export default function BlogPage() {
           {/* Fondo SVG — cubre el banner completo con la máscara curva */}
           <div className="absolute inset-0 -z-0 overflow-hidden">
             <Image
-              src="/assets/FondoBlog.svg"
+              src="/assets/fondo-trigo.svg"
               alt=""
               fill
               priority
@@ -178,81 +179,126 @@ export default function BlogPage() {
             <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               {/* Grupo izquierdo: Ordenar + Pill activo */}
               <div className="flex flex-wrap items-center gap-3">
-                {/* Dropdown "Ordenar por" */}
+                {/* Dropdown "Ordenar por" — unificado con el filtro activo */}
                 <div className="relative">
                   <button
                     type="button"
                     onClick={() => setOrdenAbierto((v) => !v)}
                     aria-expanded={ordenAbierto}
                     aria-haspopup="listbox"
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand-green shadow-soft transition hover:shadow-md"
+                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-soft transition hover:shadow-md ${
+                      filtroActivo
+                        ? "bg-brand-green text-white hover:bg-brand-greenDark"
+                        : "bg-white text-brand-green"
+                    }`}
                   >
-                    <span>Ordenar por</span>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`h-4 w-4 transition-transform ${
-                        ordenAbierto ? "rotate-180" : ""
-                      }`}
-                      aria-hidden="true"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
+                    <span>
+                      Ordenar por
+                      {filtroActivo && (
+                        <>
+                          <span className="mx-2 opacity-60">·</span>
+                          {labelFiltroActivo}
+                        </>
+                      )}
+                    </span>
+
+                    {/* Chevron o X según el estado */}
+                    {filtroActivo ? (
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFiltroActivo(false);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setFiltroActivo(false);
+                          }
+                        }}
+                        aria-label={`Quitar filtro: ${labelFiltroActivo}`}
+                        className="-mr-2 ml-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition hover:bg-white/20"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          className="h-3.5 w-3.5"
+                          aria-hidden="true"
+                        >
+                          <path d="M6 6l12 12M6 18L18 6" />
+                        </svg>
+                      </span>
+                    ) : (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`h-4 w-4 transition-transform ${
+                          ordenAbierto ? "rotate-180" : ""
+                        }`}
+                        aria-hidden="true"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    )}
                   </button>
 
-                  {/* Menú desplegable */}
                   {ordenAbierto && (
                     <>
-                      {/* Backdrop para cerrar al hacer click fuera */}
+                      {/* Overlay para cerrar al clickear afuera */}
                       <button
                         type="button"
                         aria-label="Cerrar menú de ordenamiento"
                         onClick={() => setOrdenAbierto(false)}
-                        className="fixed inset-0 z-40 cursor-default"
+                        className="fixed inset-0 z-10 cursor-default"
                       />
+
+                      {/* Lista de opciones */}
                       <ul
                         role="listbox"
-                        aria-label="Opciones de ordenamiento"
-                        className="absolute left-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-2xl bg-white py-2 shadow-card"
+                        className="absolute left-0 top-full z-20 mt-2 w-56 overflow-hidden rounded-2xl bg-white py-1 shadow-xl ring-1 ring-neutral-200"
                       >
-                        {OPCIONES_ORDEN.map((op) => {
-                          const activo = op.valor === orden;
+                        {OPCIONES_ORDEN.map((opcion) => {
+                          const esActivo =
+                            filtroActivo && opcion.valor === orden;
                           return (
-                            <li
-                              key={op.valor}
-                              role="option"
-                              aria-selected={activo}
-                            >
+                            <li key={opcion.valor} role="none">
                               <button
                                 type="button"
+                                role="option"
+                                aria-selected={esActivo}
                                 onClick={() => {
-                                  setOrden(op.valor);
+                                  setOrden(opcion.valor);
                                   setFiltroActivo(true);
                                   setOrdenAbierto(false);
                                 }}
-                                className={`flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold transition ${
-                                  activo
-                                    ? "bg-brand-greenSoft text-brand-green"
-                                    : "text-neutral-700 hover:bg-neutral-50"
+                                className={`flex w-full items-center justify-between px-4 py-2.5 text-left text-sm font-medium transition hover:bg-brand-greenSoft/40 ${
+                                  esActivo
+                                    ? "text-brand-greenDark"
+                                    : "text-neutral-700"
                                 }`}
                               >
-                                <span>{op.label}</span>
-                                {activo && (
+                                {opcion.label}
+                                {esActivo && (
                                   <svg
                                     viewBox="0 0 24 24"
                                     fill="none"
                                     stroke="currentColor"
-                                    strokeWidth="3"
+                                    strokeWidth="2.5"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="h-4 w-4"
+                                    className="h-4 w-4 text-brand-green"
                                     aria-hidden="true"
                                   >
-                                    <path d="M5 13l4 4L19 7" />
+                                    <path d="M5 12l5 5L20 7" />
                                   </svg>
                                 )}
                               </button>
@@ -288,32 +334,69 @@ export default function BlogPage() {
                 )}
               </div>
 
-              {/* Buscador */}
-              <div className="relative w-full md:max-w-md">
-                <input
-                  type="search"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                  placeholder="Buscar"
-                  aria-label="Buscar artículos"
-                  className="w-full rounded-full bg-white py-3 pl-6 pr-12 text-sm font-medium text-neutral-800 shadow-soft placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-green/50"
-                />
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="pointer-events-none absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500"
-                  aria-hidden="true"
+              {/* Buscador — ícono circular en móvil que se expande, completo en desktop */}
+              <div className="flex w-full justify-end md:block md:max-w-md">
+              <div className="relative w-full">
+                {/* MÓVIL: Botón ícono (solo cuando NO está abierto) */}
+                {!busquedaAbierta && (
+                  <button
+                    type="button"
+                    onClick={() => setBusquedaAbierta(true)}
+                    aria-label="Abrir buscador"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand-green shadow-soft transition hover:shadow-md md:hidden"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                  </button>
+                )}
+                   
+                {/* MÓVIL EXPANDIDO + DESKTOP: Input completo */}
+                <div
+                  className={`relative ${busquedaAbierta ? "block" : "hidden md:block"}`}
                 >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
+                  <input
+                    type="search"
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    onBlur={() => {
+                      // En móvil, si el campo queda vacío al perder foco, cerrar el buscador
+                      if (!busqueda.trim()) setBusquedaAbierta(false);
+                    }}
+                    placeholder="Buscar"
+                    aria-label="Buscar artículos"
+                    autoFocus={busquedaAbierta}
+                    className="w-full rounded-full bg-white py-3 pl-6 pr-12 text-sm font-medium text-neutral-800 shadow-soft placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+                  />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="pointer-events-none absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500"
+                    aria-hidden="true"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                </div>
+                </div>
               </div>
             </div>
           </div>
+          
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
@@ -343,7 +426,7 @@ function PostCard({ post }: { post: Post }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-intense">
       {/* Imagen */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-neutral-100">
+      <div className="relative aspect-[16/4] w-full overflow-hidden bg-neutral-100">
         <Image
           src={post.imagen.src}
           alt={post.imagen.alt}
@@ -354,25 +437,25 @@ function PostCard({ post }: { post: Post }) {
       </div>
 
       {/* Contenido */}
-      <div className="flex flex-1 flex-col p-5 md:p-6">
+      <div className="flex flex-1 flex-col p-4 md:p-5">
         {/* Categoría */}
         <span className="text-xs font-bold uppercase tracking-[0.15em] text-brand-green">
           {post.categoria}
         </span>
 
         {/* Título */}
-        <h3 className="mt-2 text-lg font-bold leading-snug text-neutral-900 md:text-xl">
+        <h3 className="mt-2 text-lg font-bold leading-snug text-neutral-900 md:text-lg">
           {post.titulo}
         </h3>
 
         {/* Descripción */}
-        <p className="mt-3 text-sm leading-relaxed text-neutral-600 md:text-[15px]">
+        <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-neutral-600 md:text-sm">
           {post.descripcion}
         </p>
 
         {/* Separador + footer */}
         <div className="mt-auto">
-          <div className="my-4 h-px bg-neutral-200" aria-hidden="true" />
+          <div className="my-1 h-px bg-neutral-200" aria-hidden="true" />
           <div className="flex items-center justify-between gap-3">
             {/* Fecha + tiempo */}
             <div className="flex items-center gap-4 text-xs text-neutral-500">
@@ -416,7 +499,7 @@ function PostCard({ post }: { post: Post }) {
             {/* Botón Leer más */}
             <Link
               href={`/blog/${post.slug}`}
-              className="inline-flex items-center rounded-full bg-brand-purple/10 px-4 py-2 text-sm font-bold text-brand-purpleDark transition hover:bg-brand-purple/20"
+              className="inline-flex items-center rounded-full bg-brand-purple/10 px-2 py-1 text-sm font-bold text-brand-purpleDark transition hover:bg-brand-purple/20"
             >
               Leer más
             </Link>

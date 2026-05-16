@@ -89,12 +89,12 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-6px);
   }
 }
 
 .animate-seal-float {
-  animation: sealFloat 6s ease-in-out infinite;
+  animation: sealFloat 8s ease-in-out infinite;
 }
 
 /* Drawer lateral del menú móvil */

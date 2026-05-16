@@ -55,7 +55,7 @@ export function Header() {
         aria-hidden="true"
       />
 
-      <div className="container-site relative z-10 flex h-20 items-center justify-between gap-4">
+      <div className="container-site relative z-10 flex h-[68px] items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3" aria-label="Inicio">
           <Image
             src="/assets/logo-sena-menu.svg"
@@ -146,8 +146,8 @@ export function Header() {
           >
             {/* Fondo decorativo de hojas/trigo (rotado 180° para variar respecto al header) */}
             <div
-              className="pointer-events-none absolute inset-0 rotate-180 bg-cover bg-center bg-no-repeat opacity-100 mix-blend-multiply"
-              style={{ backgroundImage: "url('/assets/TrigoFondoBar.png')" }}
+              className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10 mix-blend-multiply"
+              style={{ backgroundImage: "url('/assets/trigo-responsivo.svg')" }}
               aria-hidden="true"
             />
 

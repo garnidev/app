@@ -3,9 +3,21 @@ import Link from "next/link";
 
 const REDES = [
   { label: "@SENA", href: "https://www.facebook.com/SENA", icon: "facebook" },
-  { label: "@SENACOMUNICA", href: "https://www.instagram.com/senacomunica/", icon: "instagram" },
-  { label: "@SENATV", href: "https://www.youtube.com/user/SENATV", icon: "youtube" },
-  { label: "@SENACOMUNICA", href: "https://twitter.com/SENAComunica", icon: "x" },
+  {
+    label: "@SENACOMUNICA",
+    href: "https://www.instagram.com/senacomunica/",
+    icon: "instagram",
+  },
+  {
+    label: "@SENATV",
+    href: "https://www.youtube.com/user/SENATV",
+    icon: "youtube",
+  },
+  {
+    label: "@SENACOMUNICA",
+    href: "https://twitter.com/SENAComunica",
+    icon: "x",
+  },
 ] as const;
 
 const LINKS_INST = [
@@ -34,14 +46,14 @@ export function Footer() {
       </div>
 
       {/* Tarjeta blanca flotante */}
-      <div className="relative px-4 py-8 md:px-8 md:py-12">
+      <div className="relative px-4 pb-8 pt-2 md:px-8 md:pb-12 md:pt-4">
         <div className="container-site rounded-[2rem] bg-white px-6 py-10 shadow-lg md:px-12 md:py-14 lg:px-16">
           {/* Título principal */}
           <h3 className="text-sm font-bold uppercase tracking-wide text-neutral-900 md:text-base">
             Servicio Nacional de Aprendizaje SENA
           </h3>
 
-          {/* Logos SENA + TIC — en fila (separados a los extremos en móvil y desktop) */}
+          {/* Logos SENA + Mintrabajo — en fila (separados a los extremos en móvil y desktop) */}
           <div className="mt-6 flex items-start justify-between gap-6">
             <Image
               src="/assets/logo-sena-verde-footer.svg"
@@ -51,8 +63,8 @@ export function Footer() {
               className="h-16 w-auto md:h-20"
             />
             <Image
-              src="/assets/logo-tic-footer.svg"
-              alt="Gobierno de Colombia - TIC"
+              src="/assets/logo-mintrabajo.png"
+              alt="Gobierno de Colombia - MINTRABAJO"
               width={100}
               height={120}
               className="h-20 w-auto md:h-24"
@@ -71,14 +83,32 @@ export function Footer() {
                 Línea de atención y contacto
               </h4>
               <dl className="mt-3 space-y-1 text-sm text-neutral-700 md:text-[15px]">
-                <ContactRow label="Dirección:" value="Calle 57 No. 8 - 69 Bogotá D.C. (Cundinamarca)" />
+                <ContactRow
+                  label="Dirección:"
+                  value="Calle 57 No. 8 - 69 Bogotá D.C. (Cundinamarca)"
+                />
                 <ContactRow label="Código postal:" value="110111" />
-                <ContactRow label="Horario de atención:" value="Lunes a viernes xx:xx a.m. - xx:xx p.m." />
-                <ContactRow label="Teléfono conmutador:" value="+57(xx) xxx xx xx" />
+                <ContactRow
+                  label="Horario de atención:"
+                  value="Lunes a viernes xx:xx a.m. - xx:xx p.m."
+                />
+                <ContactRow
+                  label="Teléfono conmutador:"
+                  value="+57(xx) xxx xx xx"
+                />
                 <ContactRow label="Línea gratuita:" value="+57(xx) xxx xx xx" />
-                <ContactRow label="Línea anticorrupción:" value="+57(xx) xxx xx xx" />
-                <ContactRow label="Correo institucional:" value="ministerio@ministerio.gov.co" />
-                <ContactRow label="Correo de notificaciones judiciales:" value="judiciales@gov.co" />
+                <ContactRow
+                  label="Línea anticorrupción:"
+                  value="+57(xx) xxx xx xx"
+                />
+                <ContactRow
+                  label="Correo institucional:"
+                  value="ministerio@ministerio.gov.co"
+                />
+                <ContactRow
+                  label="Correo de notificaciones judiciales:"
+                  value="judiciales@gov.co"
+                />
               </dl>
 
               {/* Redes sociales — verticales en móvil, en fila en desktop */}
@@ -92,7 +122,9 @@ export function Footer() {
                       className="group inline-flex items-center gap-2 text-sm text-neutral-700 transition hover:text-brand-purple"
                     >
                       <SocialIcon type={red.icon} />
-                      <span className="underline underline-offset-4">{red.label}</span>
+                      <span className="underline underline-offset-4">
+                        {red.label}
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -100,34 +132,37 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Certificaciones — centradas en móvil, derecha en desktop */}
-          <div className="mt-8 flex justify-center lg:justify-end">
-            <Image
-              src="/assets/logo-iso-footer.svg"
-              alt="Certificaciones ICONTEC / IQNet"
-              width={241}
-              height={78}
-              className="h-16 w-auto md:h-20"
-            />
-          </div>
+          {/* Información institucional + Certificaciones — alineados horizontalmente */}
+          <div className="mt-8 flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+            {/* Información institucional (izquierda) */}
+            <div className="order-2 w-full lg:order-1 lg:flex-1">
+              <h4 className="text-sm font-bold text-neutral-900 md:text-base">
+                Información institucional
+              </h4>
+              <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 md:flex md:flex-wrap md:gap-x-8 md:gap-y-2">
+                {LINKS_INST.map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="text-sm text-neutral-600 underline underline-offset-4 transition hover:text-brand-purple md:text-[15px]"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Información institucional */}
-          <div className="mt-8">
-            <h4 className="text-sm font-bold text-neutral-900 md:text-base">
-              Información institucional
-            </h4>
-            <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 md:flex md:flex-wrap md:gap-x-8 md:gap-y-2">
-              {LINKS_INST.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className="text-sm text-neutral-600 underline underline-offset-4 transition hover:text-brand-purple md:text-[15px]"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Certificaciones (derecha) */}
+            <div className="order-1 flex shrink-0 justify-center lg:order-2 lg:justify-end">
+              <Image
+                src="/assets/logo-iso-footer.svg"
+                alt="Certificaciones ICONTEC / IQNet"
+                width={241}
+                height={78}
+                className="h-24 w-auto md:h-20"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -144,13 +179,18 @@ function ContactRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SocialIcon({ type }: { type: "facebook" | "instagram" | "youtube" | "x" }) {
+function SocialIcon({
+  type,
+}: {
+  type: "facebook" | "instagram" | "youtube" | "x";
+}) {
   const props = {
     width: 28,
     height: 28,
     viewBox: "0 0 28 28",
     fill: "currentColor",
-    className: "h-7 w-7 text-brand-green transition group-hover:text-brand-green-dark",
+    className:
+      "h-7 w-7 text-brand-green transition group-hover:text-brand-green-dark",
     "aria-hidden": true,
   };
   switch (type) {
@@ -168,8 +208,24 @@ function SocialIcon({ type }: { type: "facebook" | "instagram" | "youtube" | "x"
       return (
         <svg {...props}>
           <rect width="28" height="28" rx="6" fill="currentColor" />
-          <rect x="7" y="7" width="14" height="14" rx="4" stroke="#fff" strokeWidth="1.5" fill="none" />
-          <circle cx="14" cy="14" r="3" stroke="#fff" strokeWidth="1.5" fill="none" />
+          <rect
+            x="7"
+            y="7"
+            width="14"
+            height="14"
+            rx="4"
+            stroke="#fff"
+            strokeWidth="1.5"
+            fill="none"
+          />
+          <circle
+            cx="14"
+            cy="14"
+            r="3"
+            stroke="#fff"
+            strokeWidth="1.5"
+            fill="none"
+          />
           <circle cx="18.5" cy="9.5" r="1" fill="#fff" />
         </svg>
       );

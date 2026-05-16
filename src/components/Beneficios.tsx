@@ -72,7 +72,7 @@ export function Beneficios() {
         alt=""
         width={200}
         height={200}
-        className="pointer-events-none absolute left-6 top-10 h-auto w-[110px] md:left-20 md:top-10 md:w-[400px]"
+        className="pointer-events-none absolute left-3 top-10 h-auto w-[110px] md:left-10 md:top-10 md:w-[400px]"
         aria-hidden="true"
       />
       <Image
@@ -80,7 +80,7 @@ export function Beneficios() {
         alt=""
         width={134}
         height={759}
-        className="pointer-events-none absolute -right-8 bottom-0 h-auto w-[180px] rotate-[-15deg] md:-right-4 md:w-[240px] lg:w-[280px]"
+        className="pointer-events-none absolute -right-8 bottom-0 h-auto w-[180px] rotate-[-1deg] md:-right-1 md:w-[240px] lg:w-[280px]"
         aria-hidden="true"
       />
 
@@ -89,7 +89,7 @@ export function Beneficios() {
         <h2 className="mx-auto max-w-3xl text-center text-4xl font-bold italic leading-tight md:text-5xl lg:text-6xl">
           <span className="text-brand-green">Beneficios del pan</span>
           <br />
-          <span className="text-gov-blue">con masa madre</span>
+          <span className="text-[#002c46]">con masa madre</span>
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-center text-base text-neutral-700 md:text-lg">
           El pan de masa madre no es solo alimento, es una tradición, salud y
@@ -125,57 +125,57 @@ export function Beneficios() {
             aria-hidden="true"
           >
             {/* 1. Fermentación natural → al pan (sube y se curva hacia centro) */}
-            <path
+            {/* <path
               d="M 320 110 Q 450 80, 520 180"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
             {/* 2. Cada pan aroma → al pan */}
-            <path
-              d="M 280 310 Q 430 290, 500 310"
+            {/* <path
+              d="M 300 400 Q 400 400, 500 310"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
             {/* 3. Prebióticas → al pan (sube hacia el pan) */}
-            <path
+            {/* <path
               d="M 400 490 Q 460 450, 520 440"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
             {/* 4. Rescata → al pan (baja y se curva hacia centro) */}
-            <path
+            {/* <path
               d="M 870 130 Q 780 110, 700 190"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
             {/* 5. Se mantiene fresco → al pan */}
-            <path
+            {/* <path
               d="M 910 330 Q 790 310, 720 310"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
             {/* 6. Mayor biodisponibilidad → al pan */}
-            <path
+            {/* <path
               d="M 760 500 Q 700 450, 680 430"
               stroke="#989898"
               strokeWidth="1.2"
               strokeDasharray="4 6"
               fill="none"
-            />
+            /> */}
           </svg>
 
           {/* Pan central */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute left-1/2 top-1/2 -mt-36 -translate-x-1/2 -translate-y-1/2">
             <Image
               src="/assets/pan-beneficios.svg"
               alt="Pan de masa madre rebanado sobre tabla de madera"
@@ -189,7 +189,7 @@ export function Beneficios() {
           {/* 1. La fermentación natural — arriba, cerca del pan */}
           <BeneficioItemPos
             {...BENEFICIOS_IZQ[0]}
-            posicion="top-[10%] left-[8%]"
+            posicion="top-[15%] left-[1%]"
             iconoPos="right"
             anchoTexto="w-[280px]"
             textAlign="right"
@@ -198,8 +198,8 @@ export function Beneficios() {
           {/* 2. Cada pan aroma — medio-izquierda, más afuera */}
           <BeneficioItemPos
             {...BENEFICIOS_IZQ[1]}
-            posicion="top-[42%] left-[4%]"
-            iconoPos="top-right"
+            posicion="top-[38%] left-[4%]"
+            iconoPos="right"
             anchoTexto="w-[260px]"
             textAlign="center"
           />
@@ -207,7 +207,7 @@ export function Beneficios() {
           {/* 3. Sus propiedades prebióticas — abajo, hacia el centro */}
           <BeneficioItemPos
             {...BENEFICIOS_IZQ[2]}
-            posicion="bottom-[8%] left-[22%]"
+            posicion="bottom-[18%] left-[22%]"
             iconoPos="top"
             anchoTexto="w-[280px]"
             textAlign="center"
@@ -217,7 +217,7 @@ export function Beneficios() {
           {/* 4. Rescata un saber — arriba, cerca del pan */}
           <BeneficioItemPos
             {...BENEFICIOS_DER[0]}
-            posicion="top-[12%] right-[6%]"
+            posicion="top-[18%] right-[1%]"
             iconoPos="left"
             anchoTexto="w-[280px]"
             textAlign="left"
@@ -235,7 +235,7 @@ export function Beneficios() {
           {/* 6. Mayor biodisponibilidad — abajo, hacia el centro */}
           <BeneficioItemPos
             {...BENEFICIOS_DER[2]}
-            posicion="bottom-[6%] right-[22%]"
+            posicion="bottom-[18%] right-[22%]"
             iconoPos="top-left"
             anchoTexto="w-[260px]"
             textAlign="center"
@@ -306,7 +306,7 @@ function BeneficioItemPos({
       <div className={`absolute ${posicion} flex flex-col items-center gap-2`}>
         <IconoConPunto posicionPunto="bottom-center" />
         <p className={`${anchoTexto} ${textAlignClass} text-sm leading-relaxed md:text-[15px]`}>
-          <strong className="font-bold text-gov-blue">{titulo}</strong>{" "}
+          <strong className="font-bold text-[#002c46]">{titulo}</strong>{" "}
           <span className="text-neutral-600">{descripcion}</span>
         </p>
       </div>
@@ -321,7 +321,7 @@ function BeneficioItemPos({
       <div className={`absolute ${posicion} flex flex-col ${alignItems} gap-2`}>
         <IconoConPunto posicionPunto={punto} />
         <p className={`${anchoTexto} ${textAlignClass} text-sm leading-relaxed md:text-[15px]`}>
-          <strong className="font-bold text-gov-blue">{titulo}</strong>{" "}
+          <strong className="font-bold text-[#002c46]">{titulo}</strong>{" "}
           <span className="text-neutral-600">{descripcion}</span>
         </p>
       </div>
@@ -336,7 +336,7 @@ function BeneficioItemPos({
     <div className={`absolute ${posicion} flex gap-3 ${layoutClass}`}>
       <IconoConPunto posicionPunto={punto} />
       <p className={`${anchoTexto} ${textAlignClass} text-sm leading-relaxed md:text-[15px]`}>
-        <strong className="font-bold text-gov-blue">{titulo}</strong>{" "}
+        <strong className="font-bold text-[#002c46]">{titulo}</strong>{" "}
         <span className="text-neutral-600">{descripcion}</span>
       </p>
     </div>
@@ -368,13 +368,13 @@ function IconoConPunto({
         height={30}
         className="h-7 w-auto"
       />
-      <Image
+      {/* <Image
         src="/assets/punto-verde.svg"
         alt=""
         width={7}
         height={7}
         className={`absolute h-2 w-2 ${punto[posicionPunto]}`}
-      />
+      /> */}
     </span>
   );
 }
@@ -423,7 +423,7 @@ function BeneficioItemMovil({ titulo, descripcion }: Beneficio) {
 
       {/* Texto centrado */}
       <p className="text-center text-sm leading-relaxed md:text-[15px]">
-        <strong className="font-bold text-gov-blue">{titulo}</strong>{" "}
+        <strong className="font-bold text-[#002c46]">{titulo}</strong>{" "}
         <span className="text-neutral-600">{descripcion}</span>
       </p>
     </div>

@@ -30,14 +30,14 @@ export function ColombiaHuele() {
           {/* ============================================================ */}
           {/* ==============  MÓVIL / TABLET (< lg) — intacto  =========== */}
           {/* ============================================================ */}
-          <div className="relative overflow-hidden rounded-[2rem] bg-brand-purpleDark p-6 pb-0 shadow-card md:p-12 md:pb-0 lg:hidden">
+          <div className="relative overflow-hidden rounded-[2rem] bg-brand-purpleDark p-6 pb-0 md:p-12 md:pb-0 lg:hidden">
             <div className="relative z-10 grid items-center gap-6 md:gap-8">
               {/* Video */}
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setVideoOpen(true)}
-                  className="group relative block w-full overflow-hidden rounded-2xl border-[6px] border-white shadow-intense md:border-8"
+                  className="group relative block w-full overflow-hidden rounded-2xl border-[6px] border-white md:border-8"
                   aria-label="Reproducir video"
                 >
                   <Image
@@ -62,7 +62,7 @@ export function ColombiaHuele() {
 
               {/* Texto */}
               <div>
-                <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
+                <h2 className="text-center text-3xl font-bold leading-tight text-white md:text-4xl">
                   Colombia huele
                   <br />a masa madre
                 </h2>
@@ -97,7 +97,7 @@ export function ColombiaHuele() {
           {/* ============================================================ */}
           <div className="relative hidden lg:block">
             {/* Rectángulo morado: ~62% del ancho, alto propio */}
-            <div className="relative w-[80%] rounded-[2rem] bg-brand-purpleDark pb-24 pl-14 pr-10 pt-16 shadow-card">
+            <div className="relative w-[80%] rounded-[2rem] bg-brand-purpleDark pb-24 pl-14 pr-10 pt-16">
               {/* Título */}
               <h2 className="text-5xl font-bold leading-tight text-white">
                 Colombia huele
@@ -131,7 +131,7 @@ export function ColombiaHuele() {
               <button
                 type="button"
                 onClick={() => setVideoOpen(true)}
-                className="group relative block w-full overflow-hidden rounded-2xl border-8 border-white shadow-intense"
+                className="group relative block w-full overflow-hidden rounded-2xl border-8 border-white"
                 aria-label="Reproducir video"
               >
                 <Image
@@ -141,7 +141,7 @@ export function ColombiaHuele() {
                   height={400}
                   className="h-auto w-full object-cover transition duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black/20 transition group-hover:bg-black/10" />
+                {/* <div className="absolute inset-0 bg-black/20 transition group-hover:bg-black/10" /> */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
                     src="/assets/logo-play-video.svg"

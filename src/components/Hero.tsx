@@ -57,7 +57,7 @@ export function Hero() {
 
   return (
     <section id="inicio" ref={sectionRef} className="relative">
-      <div className="relative h-[720px] w-full sm:h-[780px] lg:h-[720px] xl:h-[800px] 2xl:h-[860px]">
+      <div className="relative h-[560px] w-full sm:h-[640px] lg:h-[720px] xl:h-[800px] 2xl:h-[860px]">
         {/* Fondo de trigo con parallax — contenedor con overflow-hidden propio */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
@@ -114,7 +114,7 @@ export function Hero() {
                 alt="Sabores que fermentan nuestra tierra"
                 width={310}
                 height={286}
-                className="h-[230px] w-auto drop-shadow-xl sm:h-[260px]"
+                className="h-[180px] w-auto drop-shadow-xl sm:h-[210px]"
                 priority
               />
             </div>

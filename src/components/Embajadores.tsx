@@ -16,18 +16,18 @@ const CHIPS = [
  */
 export function Embajadores() {
   return (
-    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-20 md:pt-6">
+    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-0 md:pt-0">
       <div className="container-site">
         <div className="flex flex-col items-center gap-8 lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
           {/* Columna de texto (segunda en móvil, primera en desktop) */}
-          <div className="order-2 w-full text-center text-white lg:order-1 lg:text-left">
+          <div className="order-2 w-full text-center text-white lg:order-1 lg:-mt-[150px]  lg:pl-12 lg:text-left">
             <h2 className="text-3xl font-bold italic leading-tight md:text-4xl lg:text-5xl">
               Embajadores
               <br />
               de la Masa Madre
             </h2>
 
-            <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-white/90 md:text-[15px] lg:mx-0">
+            <p className="mx-auto mt-6 max-w-xl text-sm leading-none text-white/90 md:text-[15px] lg:mx-0">
               Personas que decidieron volver a lo auténtico y hoy inspiran a sus
               comunidades con pan hecho con tiempo, respeto y tradición.
               Guardianes del sabor real. Cada uno de ellos decidió apostar por
@@ -39,7 +39,7 @@ export function Embajadores() {
             <ul className="mt-6 flex flex-col items-center gap-3 lg:flex-row lg:flex-wrap lg:items-start">
               {CHIPS.map((chip) => (
                 <li key={chip.label}>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/5 px-5 py-2 text-xs font-medium text-white md:text-sm">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/5 px-4 py-1.5 text-xs font-medium text-white md:text-sm lg:px-4 lg:py-1.5 lg:text-xs">
                     <span aria-hidden="true">{chip.emoji}</span>
                     {chip.label}
                   </span>
@@ -79,18 +79,18 @@ export function Embajadores() {
               {/* Círculo de fondo con borde blanco */}
               <div
                 className="
-                absolute rounded-full border-[20px] border-white bg-white
-                left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2
-                sm:left-1/2 sm:top-1/2 sm:h-[300px] sm:w-[300px] sm:border-[20px] border-white bg-white
-                md:left-1/2 md:top-1/2 md:h-[00px] md:w-[00px] md:border-8 lg:border-[20px] border-white bg-white
-                lg:top-[20%] lg:h-[350px] lg:w-[350px] lg:border-[30px] border-white bg-white
+                  absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white
+                  h-[320px] w-[320px] border-[10px] border-white
+                  sm:h-[360px] sm:w-[360px] sm:border-[16px]
+                  md:h-[440px] md:w-[440px] md:border-[20px]
+                  lg:top-[30%] lg:h-[400px] lg:w-[400px] lg:border-[20px]
                 "
               >
                 <Image
                   src="/assets/fondo-foto-embajadores.svg"
                   alt=""
                   fill
-                  className="object-cover"
+                  className="rounded-full object-cover"
                   aria-hidden="true"
                 />
               </div>
@@ -99,14 +99,14 @@ export function Embajadores() {
               <Image
                 src="/assets/imagen-embajadores.svg"
                 alt="Embajadora de la masa madre"
-                width={560}
-                height={640}
+                width={600}
+                height={660}
                 className="
-                absolute z-10 w-auto max-w-none object-contain -translate-x-1/2
-                bottom-2 left-[52%] h-[100%]
-                sm:bottom-4 sm:left-[52%] sm:h-[10%]
-                md:bottom-4 md:left-[55%] md:h-[10%]
-                lg:bottom-60 lg:left-[55%] lg:h-[80%]
+                  absolute z-10 -translate-x-1/2 object-contain w-auto max-w-none
+                  bottom-2 left-[52%] h-[100%]
+                  sm:bottom-4 sm:left-[52%] sm:h-[100%]
+                  md:bottom-4 md:left-[55%] md:h-[100%]
+                  lg:bottom-40 lg:left-[53%] lg:h-[90%]
                 "
                 priority={false}
               />
