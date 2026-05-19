@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { SinResultados } from "./SinResultados";
 import {
@@ -37,6 +37,20 @@ type Props = {
  * 2. CON BÚSQUEDA: 2 bloques (ubicaciones + panaderías)
  * 3. DEPARTAMENTO SELECCIONADO: vista detalle con panaderías agrupadas por ciudad
  */
+
+/** Detecta si es móvil (ancho < 768px) reactivo */
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
 export function BuscadorMapa({
   value,
   onChange,
@@ -49,6 +63,10 @@ export function BuscadorMapa({
   const [departamentoActivo, setDepartamentoActivo] =
     useState<Departamento | null>(null);
   const contenedorRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const touchStartY = useRef<number>(0);
 
   const setAbierto = (v: boolean) => {
     setAbiertoLocal(v);
@@ -58,7 +76,7 @@ export function BuscadorMapa({
   const tieneBusqueda = value.trim().length > 0;
   const enDetalle = departamentoActivo !== null;
   const panelVisible = abierto || enDetalle;
-  
+
   const ubicacionesResult = useMemo(() => buscarUbicaciones(value), [value]);
 
   const panaderiasResult = useMemo(
@@ -115,17 +133,107 @@ export function BuscadorMapa({
     onChange("");
   };
 
+  /** Gesto: inicio del swipe */
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isMobile) return;
+      touchStartY.current = e.touches[0].clientY;
+      setIsDragging(true);
+    },
+    [isMobile],
+  );
+
+  /** Gesto: durante el swipe */
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isMobile || !isDragging) return;
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - touchStartY.current;
+      // Solo permitimos swipe hacia abajo (positivo)
+      if (diff > 0) {
+        setSwipeOffset(diff);
+      }
+    },
+    [isMobile, isDragging],
+  );
+
+  /** Gesto: fin del swipe */
+  const handleTouchEnd = useCallback(() => {
+    if (!isMobile) return;
+    setIsDragging(false);
+
+    // Si arrastró más de 100px hacia abajo, cierra
+    if (swipeOffset > 100) {
+      setAbierto(false);
+      if (enDetalle) setDepartamentoActivo(null);
+    }
+    setSwipeOffset(0);
+  }, [isMobile, swipeOffset, enDetalle]);
+
   return (
     <div
       ref={contenedorRef}
-      className={`relative flex flex-col bg-white shadow-2xl transition-all ${
-        panelVisible ? "h-full" : "h-auto rounded-3xl"
-      }`}
+      style={{
+        transform:
+          isDragging && swipeOffset > 0
+            ? `translateY(${swipeOffset}px)`
+            : undefined,
+        transition: isDragging ? "none" : "transform 300ms ease-out",
+      }}
+      className={`relative flex flex-col bg-white shadow-2xl ${
+        panelVisible ? "h-full md:rounded-none" : "h-auto rounded-3xl"
+      } ${panelVisible && isMobile ? "rounded-t-3xl" : ""}`}
     >
+      {/* Drag handle visible solo en móvil cuando el panel está abierto */}
+      {panelVisible && isMobile && (
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="flex shrink-0 cursor-grab justify-center pt-3 pb-1 active:cursor-grabbing"
+        >
+          <div className="h-1.5 w-12 rounded-full bg-neutral-300" />
+        </div>
+      )}
+
+      {/* Header móvil: título + botón X (solo cuando panel abierto en móvil) */}
+      {panelVisible && isMobile && !enDetalle && (
+        <div className="flex shrink-0 items-center justify-between px-5 pb-2 pt-2">
+          <h2 className="text-base font-bold italic text-support-navy">
+            Seleccione un departamento
+          </h2>
+          <button
+            type="button"
+            onClick={() => {
+              setAbierto(false);
+              if (enDetalle) setDepartamentoActivo(null);
+            }}
+            aria-label="Cerrar panel"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition hover:bg-neutral-200"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M6 18L18 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Input fijo arriba */}
       <div
         className={`relative shrink-0 ${
-          panelVisible ? "border-b border-neutral-100 p-4" : "p-3"
+          panelVisible
+            ? isMobile
+              ? "px-4 pb-3" // móvil con panel abierto: padding reducido
+              : "border-b border-neutral-100 p-4" // desktop con panel abierto
+            : "p-3" // cápsula sola
         }`}
       >
         <input
@@ -149,13 +257,14 @@ export function BuscadorMapa({
               : "border border-neutral-200 focus:border-brand-green focus:ring-brand-green/30"
           } ${enDetalle ? "cursor-default" : ""}`}
         />
+        {/* Botón X o lupa al lado derecho del input */}
         {enDetalle ? (
           <button
             type="button"
             aria-label="Volver a la lista"
             onClick={cerrarDetalle}
             className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 ${
-              panelVisible ? "right-6" : "right-5"
+              panelVisible ? (isMobile ? "right-6" : "right-6") : "right-5"
             }`}
           >
             <svg
@@ -176,7 +285,7 @@ export function BuscadorMapa({
             aria-label="Buscar"
             onClick={() => setAbierto(true)}
             className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 ${
-              panelVisible ? "right-6" : "right-5"
+              panelVisible ? (isMobile ? "right-6" : "right-6") : "right-5"
             }`}
           >
             <svg

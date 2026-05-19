@@ -23,11 +23,23 @@ import { CompartirModal } from "./CompartirModal";
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
-const VIEW_INITIAL = {
+const VIEW_INITIAL_DESKTOP = {
   longitude: -73.5,
   latitude: 4.5,
   zoom: 4.5,
 };
+
+const VIEW_INITIAL_MOBILE = {
+  longitude: -73.5,
+  latitude: 4.5,
+  zoom: 4.5,
+};
+
+/** Detecta si es móvil (ancho < 768px) */
+function getViewInitial() {
+  if (typeof window === "undefined") return VIEW_INITIAL_DESKTOP;
+  return window.innerWidth < 768 ? VIEW_INITIAL_MOBILE : VIEW_INITIAL_DESKTOP;
+}
 
 export function MapaPanaderias() {
   const mapRef = useRef<MapRef | null>(null);
@@ -35,7 +47,9 @@ export function MapaPanaderias() {
   const [buscadorAbierto, setBuscadorAbierto] = useState(false);
   const [departamentoActivo, setDepartamentoActivo] =
     useState<Departamento | null>(null);
-  const [panaderiaActiva, setPanaderiaActiva] = useState<Panaderia | null>(null);
+  const [panaderiaActiva, setPanaderiaActiva] = useState<Panaderia | null>(
+    null,
+  );
   const [panelColapsado, setPanelColapsado] = useState(false);
   const [modalCompartir, setModalCompartir] = useState<Panaderia | null>(null);
 
@@ -49,6 +63,7 @@ export function MapaPanaderias() {
   /** Selecciona una panadería: muestra detalle + flyTo */
   const handleSelectPanaderia = (p: Panaderia) => {
     setPanaderiaActiva(p);
+    const view = getViewInitial();
     mapRef.current?.flyTo({
       center: p.coords,
       zoom: 14,
@@ -59,9 +74,10 @@ export function MapaPanaderias() {
   const handleSelectDepartamento = (depto: Departamento) => {
     setDepartamentoActivo(depto);
     setPanaderiaActiva(null);
+    const view = getViewInitial();
     mapRef.current?.flyTo({
-      center: depto.coordsCentro,
-      zoom: depto.zoomNivel,
+      center: [view.longitude, view.latitude],
+      zoom: view.zoom,
       duration: 2000,
     });
   };
@@ -75,7 +91,7 @@ export function MapaPanaderias() {
       <Map
         ref={mapRef}
         mapboxAccessToken={TOKEN}
-        initialViewState={VIEW_INITIAL}
+        initialViewState={getViewInitial()}
         mapStyle="mapbox://styles/mapbox/navigation-night-v1"
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
@@ -154,12 +170,14 @@ export function MapaPanaderias() {
         <div className="container-site relative h-full">
           {/* Panel del buscador */}
           <div
-            className={`pointer-events-auto absolute left-4 w-full max-w-md transition-all duration-500 md:left-0 ${
+            className={`pointer-events-auto absolute w-full transition-all duration-500 md:max-w-md ${
               buscadorAbierto || departamentoActivo
-                ? "bottom-0 top-0"
-                : "top-6"
+                ? "bottom-0 left-0 top-0"
+                : "left-0 right-0 top-4 px-4 md:left-0 md:right-auto md:top-6 md:px-0"
             } ${
-              panelColapsado ? "-translate-x-[calc(100%+1rem)]" : "translate-x-0"
+              panelColapsado
+                ? "-translate-x-[calc(100%+1rem)]"
+                : "translate-x-0"
             }`}
           >
             <BuscadorMapa
@@ -201,14 +219,16 @@ export function MapaPanaderias() {
 
           {/* Tarjeta promo (oculta si hay buscador abierto, depto o panadería activa) */}
           {!buscadorAbierto && !departamentoActivo && !panaderiaActiva && (
-            <div className="pointer-events-auto absolute bottom-6 left-4 w-full max-w-sm md:left-0">
+            <div className="pointer-events-auto absolute bottom-4 left-4 right-4 md:bottom-6 md:left-0 md:right-auto md:w-full md:max-w-sm">
               <TarjetaPromo />
             </div>
           )}
 
-          {/* Tarjeta de detalle de panadería (flotante centrada respecto al panel) */}
+          {/* Tarjeta de detalle de panadería:
+    - Desktop: flotante a la derecha del panel
+    - Móvil: bottom sheet ocupando toda la pantalla */}
           {panaderiaActiva && (
-            <div className="pointer-events-none absolute left-[30rem] top-6 z-20">
+            <div className="pointer-events-none absolute inset-0 z-30 md:inset-auto md:left-[30rem] md:top-6">
               <PanaderiaDetalle
                 panaderia={panaderiaActiva}
                 onClose={() => setPanaderiaActiva(null)}
@@ -243,9 +263,7 @@ function MarkerPanaderia({
     <button
       type="button"
       aria-label={`Panadería ${nombre}`}
-      className={`group transition ${
-        activa ? "scale-125" : "hover:scale-110"
-      }`}
+      className={`group transition ${activa ? "scale-125" : "hover:scale-110"}`}
     >
       <Image
         src="/assets/icono-pan-marker.svg"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { formatearPrecio, type Panaderia } from "@/data/panaderias";
 
@@ -9,50 +10,155 @@ type Props = {
   onShare: () => void;
 };
 
+/** Hook para detectar móvil */
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
+
 /**
- * Tarjeta flotante con el detalle completo de una panadería.
- * Aparece sobre el mapa cuando el usuario selecciona una panadería.
+ * Tarjeta de detalle de panadería.
+ * - Desktop: tarjeta flotante con imagen grande arriba
+ * - Móvil: bottom sheet sin imagen grande, con drag handle + swipe-to-close
  */
 export function PanaderiaDetalle({ panaderia, onClose, onShare }: Props) {
+  const isMobile = useIsMobile();
+
+  // Swipe-to-close (solo móvil)
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const touchStartY = useRef(0);
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isMobile) return;
+      touchStartY.current = e.touches[0].clientY;
+      setIsDragging(true);
+    },
+    [isMobile],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isMobile || !isDragging) return;
+      const diff = e.touches[0].clientY - touchStartY.current;
+      if (diff > 0) setSwipeOffset(diff);
+    },
+    [isMobile, isDragging],
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isMobile) return;
+    setIsDragging(false);
+    if (swipeOffset > 100) onClose();
+    setSwipeOffset(0);
+  }, [isMobile, swipeOffset, onClose]);
+
   return (
-    <div className="pointer-events-auto flex max-h-[calc(100vh-180px)] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
-      {/* Imagen + botón cerrar */}
-      <div className="relative h-48 w-full shrink-0 overflow-hidden">
-        <Image
-          src={panaderia.imagen}
-          alt={panaderia.nombre}
-          fill
-          sizes="(max-width: 768px) 100vw, 400px"
-          className="object-cover"
-          priority
-        />
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Cerrar detalle"
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-neutral-700 shadow-md transition hover:bg-white hover:shadow-lg"
+    <div
+      style={{
+        transform:
+          isDragging && swipeOffset > 0
+            ? `translateY(${swipeOffset}px)`
+            : undefined,
+        transition: isDragging ? "none" : "transform 300ms ease-out",
+      }}
+      className={`pointer-events-auto flex w-full flex-col overflow-hidden bg-white shadow-2xl ${
+        isMobile
+          ? "h-full rounded-t-3xl"
+          : "max-h-[calc(100vh-180px)] max-w-md rounded-3xl"
+      }`}
+    >
+      {/* MÓVIL: Drag handle */}
+      {isMobile && (
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="flex shrink-0 cursor-grab justify-center pb-1 pt-3 active:cursor-grabbing"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            className="h-4 w-4"
-            aria-hidden="true"
+          <div className="h-1.5 w-12 rounded-full bg-neutral-300" />
+        </div>
+      )}
+
+      {/* DESKTOP: Imagen grande + botón cerrar encima */}
+      {!isMobile && (
+        <div className="relative h-48 w-full shrink-0 overflow-hidden">
+          <Image
+            src={panaderia.imagen}
+            alt={panaderia.nombre}
+            fill
+            sizes="(max-width: 768px) 100vw, 400px"
+            className="object-cover"
+            priority
+          />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar detalle"
+            className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-neutral-700 shadow-md transition hover:bg-white hover:shadow-lg"
           >
-            <path d="M6 6l12 12M6 18L18 6" />
-          </svg>
-        </button>
-      </div>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M6 18L18 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* MÓVIL: Header con nombre + X */}
+      {isMobile && (
+        <div className="flex shrink-0 items-start justify-between px-5 pb-2 pt-2">
+          <h2 className="pr-3 text-xl font-extrabold italic text-support-navy">
+            {panaderia.nombre}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar detalle"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition hover:bg-neutral-200"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M6 18L18 6" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Contenido scrolleable */}
-      <div className="flex-1 overflow-y-auto p-5">
-        {/* Nombre + descripción */}
-        <h2 className="text-xl font-extrabold italic text-support-navy md:text-2xl">
-          {panaderia.nombre}
-        </h2>
-        <p className="mt-2 text-sm text-neutral-700 md:text-[15px]">
+      <div className={`flex-1 overflow-y-auto ${isMobile ? "px-5 pb-5" : "p-5"}`}>
+        {/* Nombre (solo desktop, en móvil ya está arriba) */}
+        {!isMobile && (
+          <h2 className="text-xl font-extrabold italic text-support-navy md:text-2xl">
+            {panaderia.nombre}
+          </h2>
+        )}
+
+        {/* Descripción */}
+        <p className={`text-sm text-neutral-700 md:text-[15px] ${isMobile ? "" : "mt-2"}`}>
           {panaderia.descripcionCorta}
         </p>
 
@@ -93,6 +199,13 @@ export function PanaderiaDetalle({ panaderia, onClose, onShare }: Props) {
         {/* Línea separadora */}
         <div className="my-4 h-px bg-neutral-200" />
 
+        {/* MÓVIL: aquí irá el carrusel cuando lo definas */}
+        {isMobile && (
+          <div className="mb-4">
+            <ImagenPanaderiaMobile panaderia={panaderia} />
+          </div>
+        )}
+
         {/* Productos */}
         {panaderia.productos.length > 0 && (
           <ul className="flex flex-col gap-3">
@@ -126,7 +239,23 @@ export function PanaderiaDetalle({ panaderia, onClose, onShare }: Props) {
   );
 }
 
-/* ─── Subcomponente: item de información con ícono circular verde ─── */
+/* ─── Subcomponente: imagen móvil (placeholder del carrusel futuro) ── */
+
+function ImagenPanaderiaMobile({ panaderia }: { panaderia: Panaderia }) {
+  return (
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-neutral-200">
+      <Image
+        src={panaderia.imagen}
+        alt={panaderia.nombre}
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
+    </div>
+  );
+}
+
+/* ─── Subcomponente: item de info con ícono verde ─────────────────── */
 
 function InfoItem({
   icon,
@@ -174,7 +303,6 @@ function IconoInfo({ tipo }: { tipo: "phone" | "location" | "clock" }) {
       </svg>
     );
   }
-  // clock
   return (
     <svg {...common}>
       <circle cx="12" cy="12" r="10" />
