@@ -100,7 +100,7 @@ export function Header() {
           </ul>
 
           <Link
-            href="/#puntos-aliados"
+            href="/mapa-panaderias"
             aria-current={pathname === "/" ? "page" : undefined}
             className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition bg-brand-purple hover:bg-brand-purple-mid hover:shadow-md`}
           >

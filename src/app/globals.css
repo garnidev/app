@@ -202,3 +202,34 @@ body {
 .animate-flour-fall {
   animation: flourFall linear infinite;
 }
+
+/* Controles de zoom de Mapbox custom */
+.mapboxgl-ctrl-group {
+  border-radius: 9999px !important;
+  background-color: white !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+.mapboxgl-ctrl-group button {
+  width: 44px !important;
+  height: 44px !important;
+  background-color: white !important;
+  border: none !important;
+}
+
+.mapboxgl-ctrl-group button + button {
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: brightness(0) saturate(100%) invert(38%) sepia(95%)
+    saturate(2300%) hue-rotate(83deg) brightness(95%) contrast(101%);
+  /* Esto convierte el icono negro original a verde SENA #39A900 */
+}
+
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-top-right {
+  margin-right: 1.5rem !important;
+}

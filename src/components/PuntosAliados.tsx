@@ -31,7 +31,7 @@ export function PuntosAliados() {
           </p>
 
           <Link
-            href="#mapa"
+            href="/mapa-panaderias"
             className="mt-10 inline-flex items-center gap-3 rounded-2xl bg-brand-purple px-8 py-4 text-base font-semibold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-brand-purple-mid hover:shadow-lg"
           >
             <svg
