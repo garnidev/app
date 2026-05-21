@@ -63,7 +63,6 @@ export function MapaPanaderias() {
   /** Selecciona una panadería: muestra detalle + flyTo */
   const handleSelectPanaderia = (p: Panaderia) => {
     setPanaderiaActiva(p);
-    const view = getViewInitial();
     mapRef.current?.flyTo({
       center: p.coords,
       zoom: 14,
@@ -224,11 +223,14 @@ export function MapaPanaderias() {
             </div>
           )}
 
-          {/* Tarjeta de detalle de panadería:
+          {/* Detalle de panadería:
     - Desktop: flotante a la derecha del panel
-    - Móvil: bottom sheet ocupando toda la pantalla */}
+    - Móvil: bottom sheet (full width + top a la altura del header) */}
           {panaderiaActiva && (
-            <div className="pointer-events-none absolute inset-0 z-30 md:inset-auto md:left-[30rem] md:top-6">
+            <div
+              data-mapa-overlay
+              className="pointer-events-none absolute bottom-0 left-0 right-0 top-0 z-20 md:bottom-auto md:left-[30rem] md:right-auto md:top-6"
+            >
               <PanaderiaDetalle
                 panaderia={panaderiaActiva}
                 onClose={() => setPanaderiaActiva(null)}

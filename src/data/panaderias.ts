@@ -26,6 +26,8 @@ export type Panaderia = {
   horario: string;
   /** Productos destacados */
   productos: Producto[];
+  /** Imágenes adicionales para el carrusel del detalle (móvil) */
+  imagenesCarrusel?: string[];
   /** Coordenadas en formato [longitud, latitud] — orden de Mapbox */
   coords: [number, number];
 };
@@ -214,4 +216,24 @@ function normalizar(texto: string): string {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
+}
+
+/**
+ * Construye el array de imágenes del carrusel de una panadería:
+ * imagen principal + primeras 3 imágenes de productos.
+ *
+ * Si la panadería tiene `imagenesCarrusel` definidas explícitamente, las usa.
+ * En su defecto, las arma con la imagen principal + las imágenes de los productos.
+ */
+export function getImagenesCarrusel(panaderia: Panaderia): string[] {
+  if (panaderia.imagenesCarrusel && panaderia.imagenesCarrusel.length > 0) {
+    return panaderia.imagenesCarrusel;
+  }
+
+  const imagenes: string[] = [panaderia.imagen];
+  panaderia.productos.slice(0, 3).forEach((producto) => {
+    imagenes.push(producto.imagen);
+  });
+
+  return imagenes;
 }

@@ -233,3 +233,13 @@ body {
 .mapboxgl-ctrl-top-right {
   margin-right: 1.5rem !important;
 }
+
+/* Ocultar scrollbar del carrusel del detalle de panadería */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

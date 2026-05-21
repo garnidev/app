@@ -14,7 +14,7 @@ export function ColombiaHuele() {
   const [videoOpen, setVideoOpen] = useState(false);
 
   return (
-    <section className="relative overflow-hidden bg-white py-10">
+    <section className="relative overflow-hidden bg-white pb-2 pt-10 md:py-10">
       {/* Taza de café decorativa flotante */}
       <Image
         src="/assets/tasa-beneficios.svg"
@@ -95,9 +95,9 @@ export function ColombiaHuele() {
           {/* ============================================================ */}
           {/* ==============  DESKTOP (lg+) — nueva estructura  ========== */}
           {/* ============================================================ */}
-          <div className="relative hidden lg:block">
+          <div className="relative hidden lg:flex lg:justify-center">
             {/* Rectángulo morado: ~62% del ancho, alto propio */}
-            <div className="relative w-[80%] rounded-[2rem] bg-brand-purpleDark pb-24 pl-14 pr-10 pt-16">
+            <div className="relative w-[80%] rounded-[2rem] bg-brand-purpleDark pb-24 pl-10 pr-10 pt-16">
               {/* Título */}
               <h2 className="text-5xl font-bold leading-tight text-white">
                 Colombia huele
@@ -105,21 +105,21 @@ export function ColombiaHuele() {
               </h2>
 
               {/* Texto */}
-              <div className="mt-6 space-y-4 text-[17px] leading-relaxed text-white/90">
+              <div className="mt-6 space-y-4 text-[17px] leading-normal text-white/90">
                 <p>
                   Masa madre que transforma
                   <br />
                   Más que una técnica, es un movimiento.
                 </p>
                 <p>
-                  Junto a CampeSENA y Full Popular, estamos llevando la
-                  tradición <br/> del pan con masa madre a todo el país para
-                  fortalecer <br/> comunidades y recuperar el sabor auténtico.
+                  Junto a CampeSENA y Full Popular,<br/> estamos llevando la
+                  tradición del pan <br/> con masa madre a todo el país para <br/>
+                  fortalecer comunidades y recuperar <br/> el sabor auténtico.
                 </p>
               </div>
 
               {/* Hashtag pill blanco — pegado al borde inferior izquierdo del rectángulo */}
-              <div className="absolute -bottom-10 left-20 rounded-[2rem] bg-white py-5 pl-14 pr-20 ">
+              <div className="absolute -bottom-4 left-10 rounded-[2rem] bg-white py-5 px-10 ">
                 <span className="text-3xl font-bold italic text-brand-purple xl:text-4xl">
                   #TradiciónQueNutre
                 </span>

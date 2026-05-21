@@ -90,24 +90,24 @@ export function Footer() {
                 <ContactRow label="Código postal:" value="110111" />
                 <ContactRow
                   label="Horario de atención:"
-                  value="Lunes a viernes xx:xx a.m. - xx:xx p.m."
+                  value="Lunes a viernes 07:00 a.m. - 07:00 p.m."
                 />
                 <ContactRow
                   label="Teléfono conmutador:"
-                  value="+57(xx) xxx xx xx"
+                  value="+57 (601) 736 60 60"
                 />
-                <ContactRow label="Línea gratuita:" value="+57(xx) xxx xx xx" />
+                <ContactRow label="Línea de Whatsapp:" value="(+57) 3112545028" />
                 <ContactRow
                   label="Línea anticorrupción:"
-                  value="+57(xx) xxx xx xx"
+                  value="+57 (601) 736 60 60"
                 />
                 <ContactRow
                   label="Correo institucional:"
-                  value="ministerio@ministerio.gov.co"
+                  value="servicioalciudadano@sena.edu.co"
                 />
                 <ContactRow
                   label="Correo de notificaciones judiciales:"
-                  value="judiciales@gov.co"
+                  value="judicialdirecciong@sena.edu.co"
                 />
               </dl>
 

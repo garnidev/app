@@ -38,7 +38,7 @@ const TESTIMONIOS: Testimonio[] = [
  */
 export function Testimonios() {
   return (
-    <section id="historia" className="bg-white py-16 md:py-30">
+    <section id="historia" className="bg-white pb-12 pt-4 md:py-16">
       {/* Desktop: grid estático */}
       <div className="container-site hidden md:block">
         <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6">
@@ -84,7 +84,7 @@ function CarruselMovil() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative pb-8">
       {/* Track deslizable */}
       <div
         ref={trackRef}
@@ -95,10 +95,7 @@ function CarruselMovil() {
         <div className="w-4 flex-shrink-0" aria-hidden="true" />
 
         {TESTIMONIOS.map((t, i) => (
-          <div
-            key={i}
-            className="w-[85%] flex-shrink-0 snap-center"
-          >
+          <div key={i} className="w-[85%] flex-shrink-0 snap-center">
             <TestimonioCard {...t} />
           </div>
         ))}
@@ -134,19 +131,17 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
       <div className="relative">
         {/* Rectángulo de fondo verde claro con esquinas cóncavas (mordiscos circulares) */}
         <div
-          className="min-h-[300px] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[300px] md:px-10 md:pt-20"
+          className="min-h-[350px] rounded-tl-[6rem] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[370px] md:px-10 md:pt-20"
           style={{
             WebkitMaskImage: `
-              radial-gradient(circle 80px at 0% 0%, transparent 98%, black 100%),
-              radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
-              linear-gradient(black, black)
-            `,
+      radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
+      linear-gradient(black, black)
+    `,
             WebkitMaskComposite: "source-in",
             maskImage: `
-              radial-gradient(circle 80px at 0% 0%, transparent 98%, black 100%),
-              radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
-              linear-gradient(black, black)
-            `,
+      radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
+      linear-gradient(black, black)
+    `,
             maskComposite: "intersect",
           }}
         >

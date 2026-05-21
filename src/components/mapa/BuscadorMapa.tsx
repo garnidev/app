@@ -96,18 +96,33 @@ export function BuscadorMapa({
     if (!panelVisible) return;
 
     const handleClickAfuera = (e: MouseEvent) => {
-      if (
-        contenedorRef.current &&
-        !contenedorRef.current.contains(e.target as Node)
-      ) {
-        setAbierto(false);
-        if (enDetalle) setDepartamentoActivo(null);
+      const target = e.target as Element;
+
+      // 1) Click dentro del buscador → ignorar
+      if (contenedorRef.current && contenedorRef.current.contains(target)) {
+        return;
       }
+
+      // 2) Click dentro de un overlay del mapa (tarjeta de panadería, modal de
+      //    compartir, marker, controles del mapa) → ignorar
+      if (
+        target.closest("[data-mapa-overlay]") ||
+        target.closest("[role='dialog']") ||
+        target.closest(".mapboxgl-marker") ||
+        target.closest(".mapboxgl-ctrl")
+      ) {
+        return;
+      }
+
+      // 3) Click realmente afuera → cerrar buscador
+      //    NOTA: NO limpiamos departamentoActivo, dejamos que el usuario
+      //    decida cuándo cerrar el detalle (con el X del input)
+      setAbierto(false);
     };
 
     document.addEventListener("mousedown", handleClickAfuera);
     return () => document.removeEventListener("mousedown", handleClickAfuera);
-  }, [panelVisible, enDetalle]);
+  }, [panelVisible]);
 
   const seleccionarDepartamento = (depto: Departamento) => {
     setDepartamentoActivo(depto);

@@ -72,7 +72,7 @@ export function Beneficios() {
         alt=""
         width={200}
         height={200}
-        className="pointer-events-none absolute left-3 top-10 h-auto w-[110px] md:left-10 md:top-10 md:w-[400px]"
+        className="pointer-events-none absolute left-0 top-10 h-auto w-[110px] md:left-0 md:top-10 md:w-[400px]"
         aria-hidden="true"
       />
       <Image

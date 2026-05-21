@@ -16,9 +16,9 @@ const CHIPS = [
  */
 export function Embajadores() {
   return (
-    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-0 md:pt-0">
+    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-0 md:pt-12">
       <div className="container-site">
-        <div className="flex flex-col items-center gap-8 lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+        <div className="flex flex-col items-center  gap-8 lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-12">
           {/* Columna de texto (segunda en móvil, primera en desktop) */}
           <div className="order-2 w-full text-center text-white lg:order-1 lg:-mt-[150px]  lg:pl-12 lg:text-left">
             <h2 className="text-3xl font-bold italic leading-tight md:text-4xl lg:text-5xl">
@@ -75,15 +75,15 @@ export function Embajadores() {
 
           {/* Columna de foto (primera en móvil, segunda en desktop) */}
           <div className="relative order-1 flex -mt-20 justify-center lg:order-2 lg:mt-0 lg:justify-end">
-            <div className="relative h-[320px] w-[320px] sm:h-[380px] sm:w-[380px] md:h-[460px] md:w-[460px] lg:h-[500px] lg:w-[500px]">
+            <div className="relative h-[320px] w-[320px] sm:h-[380px] sm:w-[380px] md:h-[460px] md:w-[460px] lg:h-[300px] lg:w-[500px]">
               {/* Círculo de fondo con borde blanco */}
               <div
                 className="
                   absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white
-                  h-[320px] w-[320px] border-[10px] border-white
-                  sm:h-[360px] sm:w-[360px] sm:border-[16px]
+                  h-[280px] w-[280px] border-[10px] border-white
+                  sm:h-[360px] sm:w-[30px] sm:border-[16px]
                   md:h-[440px] md:w-[440px] md:border-[20px]
-                  lg:top-[30%] lg:h-[400px] lg:w-[400px] lg:border-[20px]
+                  lg:top-[40%] lg:h-[390px] lg:w-[390px] lg:border-[20px]
                 "
               >
                 <Image
@@ -103,10 +103,10 @@ export function Embajadores() {
                 height={660}
                 className="
                   absolute z-10 -translate-x-1/2 object-contain w-auto max-w-none
-                  bottom-2 left-[52%] h-[100%]
+                  -bottom-2 left-[52%] h-[100%]
                   sm:bottom-4 sm:left-[52%] sm:h-[100%]
-                  md:bottom-4 md:left-[55%] md:h-[100%]
-                  lg:bottom-40 lg:left-[53%] lg:h-[90%]
+                  md:bottom-4 md:left-[55%] md:h-[120%]
+                  lg:-bottom-4 lg:left-[53%] lg:h-[135%]
                 "
                 priority={false}
               />
