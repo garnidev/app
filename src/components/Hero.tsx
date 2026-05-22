@@ -57,7 +57,7 @@ export function Hero() {
 
   return (
     <section id="inicio" ref={sectionRef} className="relative">
-      <div className="relative h-[560px] w-full sm:h-[640px] lg:h-[720px] xl:h-[800px] 2xl:h-[860px]">
+      <div className="relative h-[560px] w-full sm:h-[640px] lg:h-[620px] xl:h-[800px] 2xl:h-[960px]">
         {/* Fondo de trigo con parallax — contenedor con overflow-hidden propio */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <motion.div
@@ -112,9 +112,9 @@ export function Hero() {
               <Image
                 src="/assets/logo-masa-madre.svg"
                 alt="Sabores que fermentan nuestra tierra"
-                width={310}
+                width={300}
                 height={286}
-                className="h-[180px] w-auto drop-shadow-xl sm:h-[210px]"
+                className="h-[160px] w-[200px] drop-shadow-xl sm:h-[140px]"
                 priority
               />
             </div>
@@ -174,7 +174,7 @@ export function Hero() {
             alt="Emprendedores agrícolas"
             width={958}
             height={577}
-            className="h-auto w-[660px] sm:w-[5010px] md:w-[670px] lg:w-[900px] xl:w-[1100px] 2xl:w-[1300px]"
+            className="h-auto w-[660px] sm:w-[510px] md:w-[670px] lg:w-[900px] xl:w-[1100px] 2xl:w-[1300px]"
             priority
           />
         </motion.div>

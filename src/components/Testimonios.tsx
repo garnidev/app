@@ -151,7 +151,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
           </h3>
 
           {/* Cita */}
-          <p className="mt-6 text-sm leading-none text-support-navy md:text-[15px]">
+          <p className="mt-6 text-sm leading-snug text-support-navy md:text-[15px]">
             <span className="text-support-navy">“</span>
             {cita}
             <span className="text-support-navy">”</span>

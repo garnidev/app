@@ -85,13 +85,13 @@ export function Header() {
                   <Link
                     href={link.href}
                     aria-current={activo ? "page" : undefined}
-                    className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                    className={`flex items-center gap-1 rounded-full px-4 py-2 text-[15px] font-semibold transition ${
                       activo
                         ? "bg-brand-greenDarkMenu text-white shadow-md "
                         : "text-white hover:bg-white/10"
                     }`}
                   >
-                    <Image src={link.icon} alt="" width={22} height={22} className="h-5 w-5" />
+                    <Image src={link.icon} alt="" width={22} height={22} className="h-6 w-6" />
                     <span>{link.label}</span>
                   </Link>
                 </li>

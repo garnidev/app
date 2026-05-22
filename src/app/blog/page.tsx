@@ -170,7 +170,7 @@ export default function BlogPage() {
             </h1>
 
             {/* ─── Subtítulo ─────────────────────────────────────────── */}
-            <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-relaxed text-white/95 md:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-center text-base leading-snug text-white/95 md:text-lg">
               Las historias detrás de los oficios y las regiones que hacen del
               pan artesano colombiano algo único.
             </p>
@@ -186,54 +186,48 @@ export default function BlogPage() {
                     onClick={() => setOrdenAbierto((v) => !v)}
                     aria-expanded={ordenAbierto}
                     aria-haspopup="listbox"
-                    className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-soft transition hover:shadow-md ${
-                      filtroActivo
-                        ? "bg-brand-green text-white hover:bg-brand-greenDark"
-                        : "bg-white text-brand-green"
-                    }`}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand-green shadow-soft transition hover:shadow-md"
                   >
-                    <span>
-                      Ordenar por
-                      {filtroActivo && (
-                        <>
-                          <span className="mx-2 opacity-60">·</span>
-                          {labelFiltroActivo}
-                        </>
-                      )}
-                    </span>
+                    <span>Ordenar por</span>
 
-                    {/* Chevron o X según el estado */}
-                    {filtroActivo ? (
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFiltroActivo(false);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
+                    {/* Pill verde interno cuando hay filtro activo */}
+                    {filtroActivo && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-green px-3 py-1 text-xs font-semibold text-white">
+                        {labelFiltroActivo}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
                             e.stopPropagation();
                             setFiltroActivo(false);
-                          }
-                        }}
-                        aria-label={`Quitar filtro: ${labelFiltroActivo}`}
-                        className="-mr-2 ml-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full transition hover:bg-white/20"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          className="h-3.5 w-3.5"
-                          aria-hidden="true"
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setFiltroActivo(false);
+                            }
+                          }}
+                          aria-label={`Quitar filtro: ${labelFiltroActivo}`}
+                          className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-full transition hover:bg-white/20"
                         >
-                          <path d="M6 6l12 12M6 18L18 6" />
-                        </svg>
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            className="h-3 w-3"
+                            aria-hidden="true"
+                          >
+                            <path d="M6 6l12 12M6 18L18 6" />
+                          </svg>
+                        </span>
                       </span>
-                    ) : (
+                    )}
+
+                    {/* Chevron — solo cuando NO hay filtro activo */}
+                    {!filtroActivo && (
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -309,42 +303,52 @@ export default function BlogPage() {
                     </>
                   )}
                 </div>
-
-                {/* Pill verde con el filtro activo (y X para quitarlo) */}
-                {filtroActivo && (
-                  <button
-                    type="button"
-                    onClick={() => setFiltroActivo(false)}
-                    className="inline-flex items-center gap-2 rounded-full bg-brand-green px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-greenDark"
-                    aria-label={`Quitar filtro: ${labelFiltroActivo}`}
-                  >
-                    <span>{labelFiltroActivo}</span>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    >
-                      <path d="M6 6l12 12M6 18L18 6" />
-                    </svg>
-                  </button>
-                )}
               </div>
 
               {/* Buscador — ícono circular en móvil que se expande, completo en desktop */}
-              <div className="flex w-full justify-end md:block md:max-w-md">
-              <div className="relative w-full">
-                {/* MÓVIL: Botón ícono (solo cuando NO está abierto) */}
-                {!busquedaAbierta && (
-                  <button
-                    type="button"
-                    onClick={() => setBusquedaAbierta(true)}
-                    aria-label="Abrir buscador"
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand-green shadow-soft transition hover:shadow-md md:hidden"
+              <div className="flex w-full justify-end md:block md:max-w-[420px]">
+                <div className="relative w-full">
+                  {/* MÓVIL: Botón ícono (solo cuando NO está abierto) */}
+                  {!busquedaAbierta && (
+                    <button
+                      type="button"
+                      onClick={() => setBusquedaAbierta(true)}
+                      aria-label="Abrir buscador"
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-brand-green shadow-soft transition hover:shadow-md md:hidden"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* MÓVIL EXPANDIDO + DESKTOP: Input completo */}
+                  <div
+                    className={`relative ${busquedaAbierta ? "block" : "hidden md:block"}`}
                   >
+                    <input
+                      type="search"
+                      value={busqueda}
+                      onChange={(e) => setBusqueda(e.target.value)}
+                      onBlur={() => {
+                        // En móvil, si el campo queda vacío al perder foco, cerrar el buscador
+                        if (!busqueda.trim()) setBusquedaAbierta(false);
+                      }}
+                      placeholder="Buscar"
+                      aria-label="Buscar artículos"
+                      autoFocus={busquedaAbierta}
+                      className="w-full rounded-full bg-white py-3 pl-6 pr-12 text-sm font-medium text-neutral-800 shadow-soft placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-green/50"
+                    />
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -352,51 +356,27 @@ export default function BlogPage() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="h-5 w-5"
+                      className="pointer-events-none absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500"
                       aria-hidden="true"
                     >
                       <circle cx="11" cy="11" r="8" />
                       <path d="M21 21l-4.35-4.35" />
                     </svg>
-                  </button>
-                )}
-                   
-                {/* MÓVIL EXPANDIDO + DESKTOP: Input completo */}
-                <div
-                  className={`relative ${busquedaAbierta ? "block" : "hidden md:block"}`}
-                >
-                  <input
-                    type="search"
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    onBlur={() => {
-                      // En móvil, si el campo queda vacío al perder foco, cerrar el buscador
-                      if (!busqueda.trim()) setBusquedaAbierta(false);
-                    }}
-                    placeholder="Buscar"
-                    aria-label="Buscar artículos"
-                    autoFocus={busquedaAbierta}
-                    className="w-full rounded-full bg-white py-3 pl-6 pr-12 text-sm font-medium text-neutral-800 shadow-soft placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-green/50"
-                  />
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="pointer-events-none absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500"
-                    aria-hidden="true"
-                  >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.35-4.35" />
-                  </svg>
-                </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
+          {/* ─── Curva en U inferior — sale del banner hacia el grid de posts ─── */}
+          <svg
+            viewBox="0 0 1440 120"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute bottom-0 left-0 z-10 h-16 w-full md:h-24"
+            aria-hidden="true"
+          >
+            <path d="M0,120 L0,0 Q720,100 1440,0 L1440,120 Z" fill="white" />
+          </svg>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
@@ -424,7 +404,7 @@ export default function BlogPage() {
 
 function PostCard({ post }: { post: Post }) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-intense">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border-[1px] border-white bg-white shadow-card transition hover:-translate-y-1 hover:shadow-intense">
       {/* Imagen */}
       <div className="relative aspect-[16/4] w-full overflow-hidden bg-neutral-100">
         <Image
@@ -449,13 +429,13 @@ function PostCard({ post }: { post: Post }) {
         </h3>
 
         {/* Descripción */}
-        <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-neutral-600 md:text-sm">
+        <p className="mt-1 line-clamp-3 text-sm leading-snug text-neutral-600 md:text-sm">
           {post.descripcion}
         </p>
 
         {/* Separador + footer */}
         <div className="mt-auto">
-          <div className="my-1 h-px bg-neutral-200" aria-hidden="true" />
+          <div className="my-3 h-px bg-neutral-200" aria-hidden="true" />
           <div className="flex items-center justify-between gap-3">
             {/* Fecha + tiempo */}
             <div className="flex items-center gap-4 text-xs text-neutral-500">
@@ -531,7 +511,7 @@ function EmptyState({ busqueda }: { busqueda: string }) {
       <h2 className="mt-4 text-xl font-bold text-neutral-900">
         Sin resultados
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+      <p className="mt-2 text-sm leading-snug text-neutral-600">
         {busqueda
           ? `No encontramos artículos que coincidan con "${busqueda}". Intenta con otras palabras.`
           : "No hay artículos disponibles en este momento."}

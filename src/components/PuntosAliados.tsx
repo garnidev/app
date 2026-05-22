@@ -11,7 +11,7 @@ export function PuntosAliados() {
   return (
     <section
       id="puntos-aliados"
-      className="relative overflow-hidden bg-white pb-20 pt-0 md:pb-16 md:pt-0"
+      className="relative overflow-hidden bg-white pb-20 pt-20 md:pb-16 md:pt-15"
     >
       <div className="container-site grid items-center gap-10 lg:grid-cols-[1fr_1.4fr]">
         {/* Columna izquierda - texto (arriba en móvil) */}

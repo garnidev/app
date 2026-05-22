@@ -65,14 +65,14 @@ const BENEFICIOS_MOVIL_ABAJO: Beneficio[] = [
  */
 export function Beneficios() {
   return (
-    <section className="relative overflow-hidden bg-white pb-24 pt-0 md:pt-0">
+    <section className="relative overflow-hidden bg-white pb-24 pt-5 md:pt-0">
       {/* ===== Decoraciones de fondo ===== */}
       <Image
         src="/assets/huevo-beneficios.svg"
         alt=""
         width={200}
         height={200}
-        className="pointer-events-none absolute left-0 top-10 h-auto w-[110px] md:left-0 md:top-10 md:w-[400px]"
+        className="pointer-events-none absolute left-0 top-40 h-auto w-[110px] md:left-0 md:top-10 md:w-[400px]"
         aria-hidden="true"
       />
       <Image
@@ -80,13 +80,13 @@ export function Beneficios() {
         alt=""
         width={134}
         height={759}
-        className="pointer-events-none absolute -right-8 bottom-0 h-auto w-[180px] rotate-[-1deg] md:-right-1 md:w-[240px] lg:w-[280px]"
+        className="pointer-events-none absolute -right-14 bottom-0 h-auto w-[180px] rotate-[-1deg] md:-right-12 md:w-[240px] lg:w-[280px]"
         aria-hidden="true"
       />
 
       <div className="container-site relative z-10">
         {/* Título */}
-        <h2 className="mx-auto max-w-3xl text-center text-4xl font-bold italic leading-tight md:text-5xl lg:text-6xl">
+        <h2 className="mx-auto max-w-3xl text-center text-4xl font-bold italic leading-none md:text-5xl lg:text-6xl">
           <span className="text-brand-green">Beneficios del pan</span>
           <br />
           <span className="text-[#002c46]">con masa madre</span>
