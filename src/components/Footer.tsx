@@ -21,9 +21,9 @@ const REDES = [
 ] as const;
 
 const LINKS_INST = [
-  { label: "Políticas", href: "#politicas" },
-  { label: "Mapa del sitio", href: "#mapa-sitio" },
-  { label: "Términos y Condiciones", href: "#terminos" },
+  { label: "Políticas", href: "https://www.sena.edu.co/es-co/transparencia/Paginas/habeas_data.aspx" },
+  { label: "Mapa del sitio", href: "https://www.sena.edu.co/es-co/Paginas/mapaSitio.aspx" },
+  { label: "Términos y Condiciones", href: "https://www.sena.edu.co/es-co/Paginas/politicasCondicionesUso.aspx" },
   { label: "Accesibilidad", href: "#accesibilidad" },
 ];
 

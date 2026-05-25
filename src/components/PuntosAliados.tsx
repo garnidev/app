@@ -25,9 +25,9 @@ export function PuntosAliados() {
           </p>
 
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-neutral-600 md:text-lg lg:mx-0">
-            Explora nuestro mapa de panaderías aliadas y encuentra la masa
-            madre cerca de ti. Tradición ancestral, dale a tu cuerpo un pan
-            más auténtico, más natural y lleno de sabor.
+            Explora nuestro mapa de panaderías aliadas y encuentra la masa madre
+            cerca de ti. Tradición ancestral, dale a tu cuerpo un pan más
+            auténtico, más natural y lleno de sabor.
           </p>
 
           <Link
@@ -41,9 +41,27 @@ export function PuntosAliados() {
               fill="none"
               aria-hidden="true"
             >
-              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
-              <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
-              <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              />
+              <path
+                d="M12 3 A9 9 0 1 1 12 21 A9 9 0 1 1 12 3 M12 1V5 M12 19V23 M1 12H5 M19 12H23  M9 12
+                    A3 3 0 1 0 15 12 A3 3 0 1 0 9 12"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
             </svg>
             Ver mapa de panaderías
           </Link>

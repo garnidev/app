@@ -12,6 +12,10 @@ import { useState } from "react";
  */
 export function ColombiaHuele() {
   const [videoOpen, setVideoOpen] = useState(false);
+  /* Se extrae el ID del video de la URL, para poder embeberlo */
+  const videoUrl = "https://www.youtube.com/watch?v=LBQln9_taE0";
+  const videoId = new URL(videoUrl).searchParams.get("v");
+  const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
   return (
     <section className="relative overflow-hidden bg-white pb-2 pt-10 md:py-10">
@@ -112,9 +116,10 @@ export function ColombiaHuele() {
                   Más que una técnica, es un movimiento.
                 </p>
                 <p>
-                  Junto a CampeSENA y Full Popular,<br/> estamos llevando la
-                  tradición del pan <br/> con masa madre a todo el país para <br/>
-                  fortalecer comunidades y recuperar <br/> el sabor auténtico.
+                  Junto a CampeSENA y Full Popular,
+                  <br /> estamos llevando la tradición del pan <br /> con masa
+                  madre a todo el país para <br />
+                  fortalecer comunidades y recuperar <br /> el sabor auténtico.
                 </p>
               </div>
 
@@ -177,7 +182,12 @@ export function ColombiaHuele() {
               ✕
             </button>
             <div className="aspect-video w-full rounded-lg bg-neutral-900 flex items-center justify-center text-white/60">
-              <p>Aquí va el video embebido (YouTube/Vimeo)</p>
+              <iframe
+                className="w-full h-full"
+                src={embedUrl}
+                title="Video"
+                allowFullScreen
+              />
             </div>
           </div>
         </div>

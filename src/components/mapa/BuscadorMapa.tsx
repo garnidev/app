@@ -195,8 +195,8 @@ export function BuscadorMapa({
             : undefined,
         transition: isDragging ? "none" : "transform 300ms ease-out",
       }}
-      className={`relative flex flex-col bg-white shadow-2xl ${
-        panelVisible ? "h-full md:rounded-none" : "h-auto rounded-3xl"
+      className={`relative flex flex-col bg-white transition-all ${
+        panelVisible ?  "h-full shadow-2xl " : "h-auto rounded-full "
       } ${panelVisible && isMobile ? "rounded-t-3xl" : ""}`}
     >
       {/* Drag handle visible solo en móvil cuando el panel está abierto */}
@@ -269,7 +269,9 @@ export function BuscadorMapa({
           className={`w-full rounded-full bg-white py-3 pl-5 pr-14 text-sm font-medium text-neutral-800 placeholder:text-neutral-500 focus:outline-none focus:ring-2 md:text-base ${
             sinResultados
               ? "border-2 border-red-500 text-red-600 focus:ring-red-500/30"
-              : "border border-neutral-200 focus:border-brand-green focus:ring-brand-green/30"
+              : panelVisible
+                ? "border border-neutral-200 focus:border-brand-green focus:ring-brand-green/30"
+                : "border-2 border-brand-green focus:ring-brand-green/30"
           } ${enDetalle ? "cursor-default" : ""}`}
         />
         {/* Botón X o lupa al lado derecho del input */}

@@ -8,6 +8,7 @@ type Testimonio = {
   cita: string;
   panaderia: string;
   ciudad: string;
+  imagen: string;
 };
 
 const TESTIMONIOS: Testimonio[] = [
@@ -16,18 +17,21 @@ const TESTIMONIOS: Testimonio[] = [
     cita: "Empecé desde cero y aprender masa madre me dio identidad. Vendo algo hecho con tiempo y propósito.",
     panaderia: "Emprendedora \n panadera",
     ciudad: "Bogotá",
+    imagen: "/assets/foto-redonda-historia.svg",
   },
   {
     nombre: "María \n Fernanda",
     cita: "Desde que empezamos a trabajar con masa madre, la gente lo nota. Nos dicen que el pan sabe como el de antes. Y eso, para mí, lo cambia todo.",
     panaderia: "Panadería La Esquina \n del Trigo",
     ciudad: "Medellín",
+    imagen: "/assets/foto-redonda-historia2.svg",
   },
   {
     nombre: "Jorge \n Ramírez",
     cita: "Pensé que era solo una tendencia, pero fue una decisión que transformó mi panadería. Ahora vendemos más.",
     panaderia: "Panadería El Horno \n del Barrio",
     ciudad: "Cali",
+    imagen: "/assets/foto-redonda-historia3.svg",
   },
 ];
 
@@ -125,7 +129,7 @@ function CarruselMovil() {
   );
 }
 
-function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
+function TestimonioCard({ nombre, cita, panaderia, ciudad, imagen }: Testimonio) {
   return (
     <article className="relative mx-auto w-full max-w-sm pl-14 pt-14 md:pl-16 md:pt-16">
       <div className="relative">
@@ -175,7 +179,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad }: Testimonio) {
         {/* Foto circular - ~mitad fuera del rectángulo por la izquierda y arriba */}
         <div className="absolute -left-14 -top-14 h-28 w-28 overflow-hidden rounded-full border-[5px] border-white shadow-lg md:-left-16 md:-top-16 md:h-32 md:w-32">
           <Image
-            src="/assets/foto-redonda-historia.svg"
+            src={imagen}
             alt={nombre}
             width={128}
             height={128}

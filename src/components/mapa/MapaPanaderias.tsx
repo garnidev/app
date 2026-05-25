@@ -62,13 +62,22 @@ export function MapaPanaderias() {
 
   /** Selecciona una panadería: muestra detalle + flyTo */
   const handleSelectPanaderia = (p: Panaderia) => {
-    setPanaderiaActiva(p);
-    mapRef.current?.flyTo({
-      center: p.coords,
-      zoom: 14,
-      duration: 1500,
-    });
-  };
+  setPanaderiaActiva(p);
+
+  const isMobile =
+    typeof window !== "undefined" && window.innerWidth < 768;
+
+  mapRef.current?.flyTo({
+    center: p.coords,
+    zoom: 14,
+    duration: 1500,
+    // Solo en desktop: reservar espacio a la izquierda para que el marker
+    // no quede tapado por el panel del buscador + tarjeta de detalle
+    ...(isMobile
+      ? {}
+      : { padding: { top: 0, bottom: 0, left: 800, right: 0 } }),
+  });
+};
 
   const handleSelectDepartamento = (depto: Departamento) => {
     setDepartamentoActivo(depto);
