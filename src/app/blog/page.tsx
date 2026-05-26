@@ -112,7 +112,7 @@ export default function BlogPage() {
           {/* Fondo SVG — cubre el banner completo con la máscara curva */}
           <div className="absolute inset-0 -z-0 overflow-hidden">
             <Image
-              src="/assets/fondo-trigo.svg"
+              src="/assets/FondoBlog.svg"
               alt=""
               fill
               priority

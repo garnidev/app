@@ -44,8 +44,8 @@ export default function LoginPage() {
         />
         {/* Capa de degradado adicional para legibilidad del texto */}
         <div
-          className="absolute inset-0 bg-gradient-to-b from-brand-purple/20 via-brand-purple/50 to-[#681970]/80"
-          aria-hidden="true"
+          // className="absolute inset-0 bg-gradient-to-b from-brand-purple/20 via-brand-purple/50 to-[#681970]/80"
+          // aria-hidden="true"
         />
       </div>
 

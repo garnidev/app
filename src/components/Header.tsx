@@ -6,9 +6,24 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
-  { href: "/", label: "Inicio", icon: "/assets/icono-inicio-menu.svg" },
-  { href: "/blog", label: "Blog", icon: "/assets/icono-blog-menu.svg" },
-  { href: "/login", label: "Soporte", icon: "/assets/icono-soporte-menu.svg" },
+  {
+    href: "/",
+    label: "Inicio",
+    icon: "/assets/icono-inicio-menu.svg",
+    iconClass: "h-5 w-5",
+  },
+  {
+    href: "/blog",
+    label: "Blog",
+    icon: "/assets/icono-blog-menu.svg",
+    iconClass: "h-5 w-5",
+  },
+  {
+    href: "/login",
+    label: "Soporte",
+    icon: "/assets/icono-soporte-menu.svg",
+    iconClass: "h-5 w-5",
+  },
 ];
 
 export function Header() {
@@ -23,14 +38,14 @@ export function Header() {
    *                      (así /blog/algun-post también marca "Blog" como activo)
    */
   const isActive = (href: string): boolean => {
-  // Links de sección con hash no se marcan activos automáticamente
-  // (Inicio ocupa ese rol en el home)
-  if (href.startsWith("/#")) return false;
-  // Home exacto
-  if (href === "/") return pathname === "/";
-  // Rutas normales (/blog, /blog/algun-post, etc.)
-  return pathname.startsWith(href);
-};
+    // Links de sección con hash no se marcan activos automáticamente
+    // (Inicio ocupa ese rol en el home)
+    if (href.startsWith("/#")) return false;
+    // Home exacto
+    if (href === "/") return pathname === "/";
+    // Rutas normales (/blog, /blog/algun-post, etc.)
+    return pathname.startsWith(href);
+  };
 
   // Bloquea el scroll del body y cierra con ESC cuando el menú móvil está abierto
   useEffect(() => {
@@ -91,7 +106,13 @@ export function Header() {
                         : "text-white hover:bg-white/10"
                     }`}
                   >
-                    <Image src={link.icon} alt="" width={22} height={22} className="h-6 w-6" />
+                    <Image
+                      src={link.icon}
+                      alt=""
+                      width={22}
+                      height={22}
+                      className="h-6 w-6"
+                    />
                     <span>{link.label}</span>
                   </Link>
                 </li>
@@ -101,10 +122,20 @@ export function Header() {
 
           <Link
             href="/mapa-panaderias"
-            aria-current={pathname === "/" ? "page" : undefined}
-            className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition bg-brand-purple hover:bg-brand-purple-mid hover:shadow-md`}
+            aria-current={pathname === "/mapa-panaderias" ? "page" : undefined}
+            className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:shadow-md ${
+              pathname === "/mapa-panaderias"
+                ? "bg-[#49164E] hover:bg-brand-purpleDark"
+                : "bg-brand-purpleDark hover:bg-[#49164E]"
+            }`}
           >
-            <Image src="/assets/icono-colombia-menu.svg" alt="" width={18} height={24} className="h-5 w-auto" />
+            <Image
+              src="/assets/icono-colombia-menu.svg"
+              alt=""
+              width={18}
+              height={24}
+              className="h-5 w-auto"
+            />
             <span>Puntos Aliados Masa Madre</span>
           </Link>
         </nav>
@@ -133,7 +164,11 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
+        <div
+          className="fixed inset-0 z-50 md:hidden"
+          role="dialog"
+          aria-modal="true"
+        >
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
@@ -181,7 +216,9 @@ export function Header() {
                   className="h-24 w-24"
                   aria-hidden="true"
                 />
-                <h2 className="mt-3 text-2xl font-bold italic text-white">Menú principal</h2>
+                <h2 className="mt-3 text-2xl font-bold italic text-white">
+                  Menú principal
+                </h2>
               </div>
 
               <ul className="mt-10 flex flex-col gap-3">
@@ -199,7 +236,13 @@ export function Header() {
                             : "hover:bg-brand-greenDark/40"
                         }`}
                       >
-                        <Image src={link.icon} alt="" width={22} height={22} className="h-6 w-6" />
+                        <Image
+                          src={link.icon}
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="h-6 w-6"
+                        />
                         <span>{link.label}</span>
                       </Link>
                     </li>
@@ -207,7 +250,7 @@ export function Header() {
                 })}
                 <li className="mt-2">
                   <Link
-                    href="/#puntos-aliados"
+                    href="/mapa-panaderias"
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 rounded-full bg-brand-purple px-5 py-3 text-base font-semibold text-white shadow-md transition hover:bg-brand-purple-mid"
                   >

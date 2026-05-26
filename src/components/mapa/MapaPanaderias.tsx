@@ -44,6 +44,7 @@ function getViewInitial() {
 export function MapaPanaderias() {
   const mapRef = useRef<MapRef | null>(null);
   const [busqueda, setBusqueda] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const [buscadorAbierto, setBuscadorAbierto] = useState(false);
   const [departamentoActivo, setDepartamentoActivo] =
     useState<Departamento | null>(null);
