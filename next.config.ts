@@ -4,10 +4,17 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
     // Permitimos el uso de SVG locales como fuentes next/image.
-    // Los assets son de confianza (provistos por el proyecto).
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+
+    // Permitir imágenes servidas desde Vercel Blob
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+    ],
   },
 };
 

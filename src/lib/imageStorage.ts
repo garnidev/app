@@ -1,40 +1,59 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════
- * HELPER — Almacenamiento de imágenes
+ * HELPER — Almacenamiento de imágenes (híbrido: filesystem + Vercel Blob)
  * ─────────────────────────────────────────────────────────────────────
- * Utilidades para gestionar imágenes en el sistema de archivos:
- * - Eliminar imágenes antiguas al reemplazar
- * - Validar si una imagen es "propia" (no externa o por defecto)
+ * Detecta automáticamente el origen de cada imagen:
+ * - URLs de Vercel Blob (*.blob.vercel-storage.com) → elimina vía @vercel/blob
+ * - Rutas internas (/assets/...) → elimina del filesystem (solo dev/legacy)
+ * - Rutas protegidas o externas → se omiten
  * ═══════════════════════════════════════════════════════════════════════
  */
 
 import { unlink, access } from "fs/promises";
 import path from "path";
+import { del } from "@vercel/blob";
 
 /**
  * Rutas protegidas que NUNCA deben eliminarse aunque dejen de usarse.
- * Son archivos compartidos o imágenes por defecto.
  */
 const RUTAS_PROTEGIDAS = new Set<string>([
   "/assets/ciudades/default.jpg",
   "/assets/blog/avatar-default.jpg",
+  "/assets/avatares/avatar-default.jpg",
 ]);
 
-/**
- * Verifica si una imagen es interna (está en /assets/) y NO es protegida.
- */
+/* ─── Detección de origen ──────────────────────────────────────── */
+
+function esImagenBlob(url: string): boolean {
+  return url.includes(".blob.vercel-storage.com");
+}
+
 function esImagenInternaEliminable(rutaImagen: string): boolean {
   if (!rutaImagen) return false;
   if (!rutaImagen.startsWith("/assets/")) return false;
   if (RUTAS_PROTEGIDAS.has(rutaImagen)) return false;
-  // Seguridad básica: prevenir path traversal
   if (rutaImagen.includes("..")) return false;
   return true;
 }
 
-/**
- * Verifica si un archivo existe en el filesystem.
- */
+/* ─── Eliminación en Blob ──────────────────────────────────────── */
+
+async function eliminarDeBlob(url: string): Promise<boolean> {
+  try {
+    await del(url);
+    console.log(`🗑️  Imagen eliminada de Blob: ${url}`);
+    return true;
+  } catch (error) {
+    console.error(
+      `⚠️  Error eliminando imagen de Blob ${url}:`,
+      (error as Error).message,
+    );
+    return false;
+  }
+}
+
+/* ─── Eliminación en filesystem (legacy/dev) ───────────────────── */
+
 async function archivoExiste(rutaAbsoluta: string): Promise<boolean> {
   try {
     await access(rutaAbsoluta);
@@ -44,17 +63,7 @@ async function archivoExiste(rutaAbsoluta: string): Promise<boolean> {
   }
 }
 
-/**
- * Elimina una imagen del disco si cumple las condiciones de seguridad.
- * No lanza error si el archivo no existe o no es eliminable.
- *
- * @param rutaImagen Ruta pública (ej: "/assets/panaderias/123-abc.jpg")
- * @returns true si se eliminó, false si se omitió
- */
-export async function eliminarImagenInterna(
-  rutaImagen: string | null | undefined,
-): Promise<boolean> {
-  if (!rutaImagen) return false;
+async function eliminarDelFilesystem(rutaImagen: string): Promise<boolean> {
   if (!esImagenInternaEliminable(rutaImagen)) return false;
 
   const rutaAbsoluta = path.join(process.cwd(), "public", rutaImagen);
@@ -75,18 +84,35 @@ export async function eliminarImagenInterna(
   }
 }
 
+/* ─── API pública (misma firma de siempre) ─────────────────────── */
+
 /**
- * Reemplaza una imagen: si la antigua es interna y eliminable, la borra.
- * Útil cuando se actualiza un registro con una nueva imagen.
- *
- * @param imagenAntigua Ruta de la imagen previa
- * @param imagenNueva Ruta de la imagen nueva (para validar que cambió)
+ * Elimina una imagen del lugar correcto según su origen.
+ * - Blob → @vercel/blob del()
+ * - Filesystem → unlink()
+ * No lanza error si no existe o no es eliminable.
+ */
+export async function eliminarImagenInterna(
+  rutaImagen: string | null | undefined,
+): Promise<boolean> {
+  if (!rutaImagen) return false;
+
+  // Es una URL de Vercel Blob
+  if (esImagenBlob(rutaImagen)) {
+    return eliminarDeBlob(rutaImagen);
+  }
+
+  // Es una ruta interna del filesystem (legacy/dev)
+  return eliminarDelFilesystem(rutaImagen);
+}
+
+/**
+ * Reemplaza una imagen: si la antigua cambió, la elimina de su origen.
  */
 export async function reemplazarImagen(
   imagenAntigua: string | null | undefined,
   imagenNueva: string | null | undefined,
 ): Promise<void> {
-  // Si no hay antigua o son la misma, no hacer nada
   if (!imagenAntigua) return;
   if (imagenAntigua === imagenNueva) return;
 
@@ -94,8 +120,7 @@ export async function reemplazarImagen(
 }
 
 /**
- * Elimina múltiples imágenes (útil para carruseles o al eliminar registros
- * con varias imágenes asociadas).
+ * Elimina múltiples imágenes (carruseles, registros con varias imágenes).
  */
 export async function eliminarImagenes(
   rutas: (string | null | undefined)[],
