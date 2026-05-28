@@ -6,16 +6,14 @@ import { PostHero } from "@/components/blog/PostHero";
 import { PostContent } from "@/components/blog/PostContent";
 import { PostTags } from "@/components/blog/PostTags";
 import { CommentsSection } from "@/components/blog/CommentsSection";
-import { getAllSlugs, getPostBySlug } from "@/data/posts";
+import { getPostBySlug } from "@/data/posts";
 
-/* ═══════════════════════════════════════════════════════════════════════
-   GENERACIÓN ESTÁTICA
-   ═══════════════════════════════════════════════════════════════════════ */
-
-export async function generateStaticParams() {
-  const slugs = await getAllSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+/**
+ * Forzar página dinámica.
+ * Esto evita que Next intente pre-renderizarla en build time
+ * (cuando no hay servidor corriendo).
+ */
+export const dynamic = "force-dynamic";
 
 /* ═══════════════════════════════════════════════════════════════════════
    METADATA DINÁMICA (SEO por artículo)
@@ -65,10 +63,8 @@ export default async function PostPage({
       <GovBar />
       <Header />
       <main className="min-h-screen bg-white">
-        {/* Hero con imagen, keyword, título y metadata */}
         <PostHero post={post} />
 
-        {/* Contenido del artículo */}
         <section className="container-site relative z-10 pb-10">
           <PostContent contenido={post.contenido} />
           <PostTags tags={post.tags} />

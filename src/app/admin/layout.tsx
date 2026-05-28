@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { getCurrentUser } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Panel administrativo | Masa Madre",
   description: "Panel de administración de la Red Masa Madre Colombia.",
