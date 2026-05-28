@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Map, {
   Marker,
@@ -11,11 +11,19 @@ import Map, {
 } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import {
+  obtenerMarkers,
+  obtenerPanaderiasPorDepartamento,
+  obtenerPanaderiaPorId,
   buscarPanaderias,
-  getPanaderiasPorDepartamento,
+  filtrarMarkersPorDepartamento,
   type Panaderia,
+  type PanaderiaMarker,
 } from "@/data/panaderias";
-import { type Departamento } from "@/data/departamentos";
+import {
+  obtenerDepartamentos,
+  type Departamento,
+} from "@/data/departamentos";
+import { obtenerCiudades, type Ciudad } from "@/data/ciudades";
 import { BuscadorMapa } from "./BuscadorMapa";
 import { TarjetaPromo } from "./TarjetaPromo";
 import { PanaderiaDetalle } from "./PanaderiaDetalle";
@@ -35,72 +43,203 @@ const VIEW_INITIAL_MOBILE = {
   zoom: 4.5,
 };
 
-/** Detecta si es móvil (ancho < 768px) */
-function getViewInitial() {
-  if (typeof window === "undefined") return VIEW_INITIAL_DESKTOP;
-  return window.innerWidth < 768 ? VIEW_INITIAL_MOBILE : VIEW_INITIAL_DESKTOP;
-}
-
 export function MapaPanaderias() {
   const mapRef = useRef<MapRef | null>(null);
+
+  /* ─── Datos del backend ─────────────────────────────────────────── */
+  const [markers, setMarkers] = useState<PanaderiaMarker[]>([]);
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+  const [ciudades, setCiudades] = useState<Ciudad[]>([]);
+  const [cargandoInicial, setCargandoInicial] = useState(true);
+
+  /* ─── Búsqueda dinámica ─────────────────────────────────────────── */
   const [busqueda, setBusqueda] = useState("");
+  const [panaderiasBusqueda, setPanaderiasBusqueda] = useState<Panaderia[]>([]);
+  const [cargandoBusqueda, setCargandoBusqueda] = useState(false);
+
+  /* ─── Estados de UI ─────────────────────────────────────────────── */
   const [isMobile, setIsMobile] = useState(false);
   const [buscadorAbierto, setBuscadorAbierto] = useState(false);
   const [departamentoActivo, setDepartamentoActivo] =
     useState<Departamento | null>(null);
+  const [panaderiasDepto, setPanaderiasDepto] = useState<Panaderia[]>([]);
+  const [cargandoDepto, setCargandoDepto] = useState(false);
   const [panaderiaActiva, setPanaderiaActiva] = useState<Panaderia | null>(
     null,
   );
   const [panelColapsado, setPanelColapsado] = useState(false);
   const [modalCompartir, setModalCompartir] = useState<Panaderia | null>(null);
 
-  const panaderiasVisibles = useMemo(() => {
-    if (departamentoActivo) {
-      return getPanaderiasPorDepartamento(departamentoActivo.nombre);
+  /* ─── Detectar móvil (resuelve bug de hidratación) ──────────────── */
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  /* ─── Aplicar zoom móvil después del mount ──────────────────────── */
+  useEffect(() => {
+    if (isMobile && mapRef.current) {
+      mapRef.current.flyTo({
+        center: [VIEW_INITIAL_MOBILE.longitude, VIEW_INITIAL_MOBILE.latitude],
+        zoom: VIEW_INITIAL_MOBILE.zoom,
+        duration: 0,
+      });
     }
-    return buscarPanaderias(busqueda);
-  }, [busqueda, departamentoActivo]);
+  }, [isMobile]);
 
-  /** Selecciona una panadería: muestra detalle + flyTo */
-  const handleSelectPanaderia = (p: Panaderia) => {
-  setPanaderiaActiva(p);
+  /* ─── Cargar datos iniciales (markers + deptos + ciudades) ──────── */
+  useEffect(() => {
+    let activo = true;
 
-  const isMobile =
-    typeof window !== "undefined" && window.innerWidth < 768;
+    (async () => {
+      try {
+        setCargandoInicial(true);
+        const [markersData, deptosData, ciudadesData] = await Promise.all([
+          obtenerMarkers(),
+          obtenerDepartamentos(),
+          obtenerCiudades(),
+        ]);
 
-  mapRef.current?.flyTo({
-    center: p.coords,
-    zoom: 14,
-    duration: 1500,
-    // Solo en desktop: reservar espacio a la izquierda para que el marker
-    // no quede tapado por el panel del buscador + tarjeta de detalle
-    ...(isMobile
-      ? {}
-      : { padding: { top: 0, bottom: 0, left: 800, right: 0 } }),
-  });
-};
+        if (activo) {
+          setMarkers(markersData);
+          setDepartamentos(deptosData);
+          setCiudades(ciudadesData);
+        }
+      } catch (error) {
+        console.error("Error cargando datos del mapa:", error);
+      } finally {
+        if (activo) setCargandoInicial(false);
+      }
+    })();
 
-  const handleSelectDepartamento = (depto: Departamento) => {
-    setDepartamentoActivo(depto);
-    setPanaderiaActiva(null);
-    const view = getViewInitial();
+    return () => {
+      activo = false;
+    };
+  }, []);
+
+  /* ─── Búsqueda server-side con debounce de 300ms ────────────────── */
+  useEffect(() => {
+    if (!busqueda.trim()) {
+      setPanaderiasBusqueda([]);
+      return;
+    }
+
+    let activo = true;
+    setCargandoBusqueda(true);
+
+    const timer = setTimeout(async () => {
+      const resultados = await buscarPanaderias(busqueda);
+      if (activo) {
+        setPanaderiasBusqueda(resultados);
+        setCargandoBusqueda(false);
+      }
+    }, 300);
+
+    return () => {
+      activo = false;
+      clearTimeout(timer);
+    };
+  }, [busqueda]);
+
+  /* ─── Markers visibles en el mapa ───────────────────────────────── */
+  const markersVisibles = useMemo(() => {
+    // Si hay un depto activo, filtramos markers a ese depto
+    if (departamentoActivo) {
+      return filtrarMarkersPorDepartamento(markers, departamentoActivo.slug);
+    }
+
+    // Si hay búsqueda, mostramos los markers que matchean por id con las panaderías buscadas
+    if (busqueda.trim() && panaderiasBusqueda.length > 0) {
+      const idsEncontradas = new Set(panaderiasBusqueda.map((p) => p.id));
+      return markers.filter((m) => idsEncontradas.has(m.id));
+    }
+
+    // Default: todos los markers
+    return markers;
+  }, [markers, departamentoActivo, busqueda, panaderiasBusqueda]);
+
+  /* ─── Handlers ──────────────────────────────────────────────────── */
+
+  /** Selecciona una panadería: carga su detalle + flyTo */
+  const handleSelectPanaderia = useCallback(
+    async (idOrPanaderia: string | Panaderia) => {
+      // Si recibe el objeto completo (desde la lista), úsalo directo
+      // Si recibe solo un id (desde el marker), fetch al detalle
+      let panaderia: Panaderia | null = null;
+
+      if (typeof idOrPanaderia === "string") {
+        panaderia = await obtenerPanaderiaPorId(idOrPanaderia);
+      } else {
+        panaderia = idOrPanaderia;
+      }
+
+      if (!panaderia) return;
+
+      setPanaderiaActiva(panaderia);
+
+      mapRef.current?.flyTo({
+        center: panaderia.coords,
+        zoom: 14,
+        duration: 1500,
+        ...(isMobile
+          ? {}
+          : { padding: { top: 0, bottom: 0, left: 800, right: 0 } }),
+      });
+    },
+    [isMobile],
+  );
+
+  /** Selecciona un departamento: carga sus panaderías + flyTo */
+  const handleSelectDepartamento = useCallback(
+    async (depto: Departamento) => {
+      setDepartamentoActivo(depto);
+      setPanaderiaActiva(null);
+      setCargandoDepto(true);
+
+      // FlyTo al departamento
+      mapRef.current?.flyTo({
+        center: depto.coordsCentro,
+        zoom: depto.zoomNivel,
+        duration: 2000,
+      });
+
+      // Cargar panaderías del departamento
+      try {
+        const panaderias = await obtenerPanaderiasPorDepartamento(depto.slug);
+        setPanaderiasDepto(panaderias);
+      } catch (error) {
+        console.error("Error cargando panaderías del depto:", error);
+      } finally {
+        setCargandoDepto(false);
+      }
+    },
+    [],
+  );
+
+  /** Cierra el detalle del departamento */
+  const handleCerrarDepartamento = useCallback(() => {
+    setDepartamentoActivo(null);
+    setPanaderiasDepto([]);
+    const view = isMobile ? VIEW_INITIAL_MOBILE : VIEW_INITIAL_DESKTOP;
     mapRef.current?.flyTo({
       center: [view.longitude, view.latitude],
       zoom: view.zoom,
       duration: 2000,
     });
-  };
+  }, [isMobile]);
 
-  const handleAbrirChange = (abierto: boolean) => {
+  const handleAbrirChange = useCallback((abierto: boolean) => {
     setBuscadorAbierto(abierto);
-  };
+  }, []);
 
   return (
     <div className="relative h-[calc(100vh-120px)] w-full overflow-hidden">
       <Map
         ref={mapRef}
         mapboxAccessToken={TOKEN}
-        initialViewState={getViewInitial()}
+        initialViewState={VIEW_INITIAL_DESKTOP}
         mapStyle="mapbox://styles/mapbox/navigation-night-v1"
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
@@ -155,20 +294,20 @@ export function MapaPanaderias() {
           showZoom={true}
         />
 
-        {panaderiasVisibles.map((p) => (
+        {markersVisibles.map((m) => (
           <Marker
-            key={p.id}
-            longitude={p.coords[0]}
-            latitude={p.coords[1]}
+            key={m.id}
+            longitude={m.coords[0]}
+            latitude={m.coords[1]}
             anchor="bottom"
             onClick={(e) => {
               e.originalEvent.stopPropagation();
-              handleSelectPanaderia(p);
+              handleSelectPanaderia(m.id);
             }}
           >
             <MarkerPanaderia
-              nombre={p.nombre}
-              activa={panaderiaActiva?.id === p.id}
+              nombre={m.nombre}
+              activa={panaderiaActiva?.id === m.id}
             />
           </Marker>
         ))}
@@ -192,7 +331,17 @@ export function MapaPanaderias() {
             <BuscadorMapa
               value={busqueda}
               onChange={setBusqueda}
+              markers={markers}
+              departamentos={departamentos}
+              ciudades={ciudades}
+              departamentoActivo={departamentoActivo}
+              panaderiasDepto={panaderiasDepto}
+              cargandoDepto={cargandoDepto}
+              cargandoInicial={cargandoInicial}
+              panaderiasBusqueda={panaderiasBusqueda}
+              cargandoBusqueda={cargandoBusqueda}
               onSelectDepartamento={handleSelectDepartamento}
+              onCerrarDepartamento={handleCerrarDepartamento}
               onSelectPanaderia={handleSelectPanaderia}
               onAbrirChange={handleAbrirChange}
               panaderiaActivaId={panaderiaActiva?.id}
@@ -233,9 +382,7 @@ export function MapaPanaderias() {
             </div>
           )}
 
-          {/* Detalle de panadería:
-    - Desktop: flotante a la derecha del panel
-    - Móvil: bottom sheet (full width + top a la altura del header) */}
+          {/* Detalle de panadería */}
           {panaderiaActiva && (
             <div
               data-mapa-overlay
@@ -251,7 +398,7 @@ export function MapaPanaderias() {
         </div>
       </div>
 
-      {/* Modal de compartir (encima de todo) */}
+      {/* Modal de compartir */}
       {modalCompartir && (
         <CompartirModal
           panaderia={modalCompartir}

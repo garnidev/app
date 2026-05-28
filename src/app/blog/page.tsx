@@ -2,20 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GovBar } from "@/components/GovBar";
 import { Header } from "@/components/Header";
 import { getPosts, type Post } from "@/data/posts";
-
-/* ═══════════════════════════════════════════════════════════════════════
-   DATOS DEL BLOG
-   ─────────────────────────────────────────────────────────────────────
-   Los posts se importan desde /src/data/posts.ts — archivo compartido
-   con la página de detalle /blog/[slug]. Cuando se integre la BD, solo
-   se cambia la implementación de getPosts() en ese archivo.
-   ═══════════════════════════════════════════════════════════════════════ */
-
-const POSTS = getPosts();
 
 /* ═══════════════════════════════════════════════════════════════════════
    OPCIONES DE ORDENAMIENTO
@@ -59,17 +49,50 @@ function formatearFecha(iso: string): string {
    ═══════════════════════════════════════════════════════════════════════ */
 
 export default function BlogPage() {
+  // Estado para los posts cargados del backend
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Estados de filtros y búsqueda
   const [orden, setOrden] = useState<Orden>("recientes");
   const [ordenAbierto, setOrdenAbierto] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const [busquedaAbierta, setBusquedaAbierta] = useState(false);
-  const [filtroActivo, setFiltroActivo] = useState(false); // controla la pill de "Más recientes"
+  const [filtroActivo, setFiltroActivo] = useState(false);
+
+  // Cargar posts del backend al montar
+  useEffect(() => {
+    let activo = true;
+
+    (async () => {
+      try {
+        setCargando(true);
+        const data = await getPosts();
+        if (activo) {
+          setPosts(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (activo) {
+          console.error("Error al cargar posts:", err);
+          setError("No pudimos cargar los artículos. Intenta de nuevo.");
+        }
+      } finally {
+        if (activo) setCargando(false);
+      }
+    })();
+
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   /* ─── Derivados: lista filtrada y ordenada ───────────────────────── */
   const postsFiltrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
 
-    let resultado = POSTS.filter((p) => {
+    let resultado = posts.filter((p) => {
       if (!q) return true;
       return (
         p.titulo.toLowerCase().includes(q) ||
@@ -95,7 +118,7 @@ export default function BlogPage() {
     }
 
     return resultado;
-  }, [busqueda, orden, filtroActivo]);
+  }, [posts, busqueda, orden, filtroActivo]);
 
   const labelFiltroActivo =
     OPCIONES_ORDEN.find((o) => o.valor === orden)?.label ?? "Más recientes";
@@ -383,7 +406,11 @@ export default function BlogPage() {
             GRID DE POSTS — se monta encima del banner con margen negativo
             ═════════════════════════════════════════════════════════════ */}
         <section className="container-site relative z-20 -mt-32 pb-20 md:-mt-36">
-          {postsFiltrados.length === 0 ? (
+          {cargando ? (
+            <LoadingState />
+          ) : error ? (
+            <ErrorState mensaje={error} />
+          ) : postsFiltrados.length === 0 ? (
             <EmptyState busqueda={busqueda} />
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
@@ -516,6 +543,55 @@ function EmptyState({ busqueda }: { busqueda: string }) {
           ? `No encontramos artículos que coincidan con "${busqueda}". Intenta con otras palabras.`
           : "No hay artículos disponibles en este momento."}
       </p>
+    </div>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+      {/* 6 esqueletos para simular cargas */}
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="overflow-hidden rounded-2xl border-[1px] border-white bg-white shadow-card"
+        >
+          <div className="aspect-[16/4] w-full animate-pulse bg-neutral-200" />
+          <div className="space-y-3 p-4 md:p-5">
+            <div className="h-3 w-20 animate-pulse rounded bg-neutral-200" />
+            <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-200" />
+            <div className="h-4 w-full animate-pulse rounded bg-neutral-200" />
+            <div className="h-4 w-2/3 animate-pulse rounded bg-neutral-200" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ErrorState({ mensaje }: { mensaje: string }) {
+  return (
+    <div className="mx-auto flex max-w-md flex-col items-center rounded-3xl bg-white p-10 text-center shadow-card ring-1 ring-black/5">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-8 w-8 text-red-600"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <h2 className="mt-4 text-xl font-bold text-neutral-900">
+        Ups, algo salió mal
+      </h2>
+      <p className="mt-2 text-sm leading-snug text-neutral-600">{mensaje}</p>
     </div>
   );
 }

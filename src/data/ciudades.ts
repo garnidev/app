@@ -1,141 +1,117 @@
 /**
- * Ciudades importantes de Colombia para el buscador del mapa.
- * Se usan para filtrar y mostrar resultados de búsqueda agrupados.
- *
- * Cuando llegue el backend, este archivo puede mantenerse como
- * fuente de verdad de ciudades, o consumirse desde la BD.
+ * ═══════════════════════════════════════════════════════════════════════
+ *  CIUDADES — CONECTADO AL BACKEND
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 export type Ciudad = {
-  /** Slug para matching */
   slug: string;
-  /** Nombre de la ciudad con tildes */
   nombre: string;
-  /** Departamento al que pertenece */
   departamento: string;
-  /** URL de la imagen representativa */
   imagen: string;
+  totalPanaderias?: number;
 };
 
-export const CIUDADES: Ciudad[] = [
-  {
-    slug: "bogota",
-    nombre: "Bogotá",
-    departamento: "Cundinamarca",
-    imagen: "/assets/ciudades/bogota.jpg",
-  },
-  {
-    slug: "medellin",
-    nombre: "Medellín",
-    departamento: "Antioquia",
-    imagen: "/assets/ciudades/medellin.jpg",
-  },
-  {
-    slug: "cali",
-    nombre: "Cali",
-    departamento: "Valle del Cauca",
-    imagen: "/assets/ciudades/cali.jpg",
-  },
-  {
-    slug: "barranquilla",
-    nombre: "Barranquilla",
-    departamento: "Atlántico",
-    imagen: "/assets/ciudades/barranquilla.jpg",
-  },
-  {
-    slug: "cartagena",
-    nombre: "Cartagena",
-    departamento: "Bolívar",
-    imagen: "/assets/ciudades/cartagena.jpg",
-  },
-  {
-    slug: "bucaramanga",
-    nombre: "Bucaramanga",
-    departamento: "Santander",
-    imagen: "/assets/ciudades/bucaramanga.jpg",
-  },
-  {
-    slug: "pereira",
-    nombre: "Pereira",
-    departamento: "Risaralda",
-    imagen: "/assets/ciudades/pereira.jpg",
-  },
-  {
-    slug: "santa-marta",
-    nombre: "Santa Marta",
-    departamento: "Magdalena",
-    imagen: "/assets/ciudades/santa-marta.jpg",
-  },
-  {
-    slug: "manizales",
-    nombre: "Manizales",
-    departamento: "Caldas",
-    imagen: "/assets/ciudades/manizales.jpg",
-  },
-  {
-    slug: "ibague",
-    nombre: "Ibagué",
-    departamento: "Tolima",
-    imagen: "/assets/ciudades/ibague.jpg",
-  },
-  {
-    slug: "armenia",
-    nombre: "Armenia",
-    departamento: "Quindío",
-    imagen: "/assets/ciudades/armenia.jpg",
-  },
-  {
-    slug: "popayan",
-    nombre: "Popayán",
-    departamento: "Cauca",
-    imagen: "/assets/ciudades/popayan.jpg",
-  },
-  {
-    slug: "neiva",
-    nombre: "Neiva",
-    departamento: "Huila",
-    imagen: "/assets/ciudades/neiva.jpg",
-  },
-  {
-    slug: "villavicencio",
-    nombre: "Villavicencio",
-    departamento: "Meta",
-    imagen: "/assets/ciudades/villavicencio.jpg",
-  },
-  {
-    slug: "pasto",
-    nombre: "Pasto",
-    departamento: "Nariño",
-    imagen: "/assets/ciudades/pasto.jpg",
-  },
-  {
-    slug: "monteria",
-    nombre: "Montería",
-    departamento: "Córdoba",
-    imagen: "/assets/ciudades/monteria.jpg",
-  },
-  {
-    slug: "valledupar",
-    nombre: "Valledupar",
-    departamento: "Cesar",
-    imagen: "/assets/ciudades/valledupar.jpg",
-  },
-  {
-    slug: "cucuta",
-    nombre: "Cúcuta",
-    departamento: "Norte de Santander",
-    imagen: "/assets/ciudades/cucuta.jpg",
-  },
-];
+/** Versión extendida para admin (incluye id y slug del departamento) */
+export type CiudadAdmin = {
+  id: string;
+  slug: string;
+  nombre: string;
+  imagen: string;
+  departamento: { nombre: string; slug: string };
+  totalPanaderias: number;
+};
 
-/* ─── Helpers ─────────────────────────────────────────────────────── */
+type CiudadBackend = {
+  id: string;
+  slug: string;
+  nombre: string;
+  imagen: string;
+  departamento: { nombre: string; slug: string };
+  totalPanaderias: number;
+};
 
-/** Búsqueda de ciudades por nombre o departamento */
-export function buscarCiudades(query: string): Ciudad[] {
+function apiUrl(path: string): string {
+  // En el cliente: URL relativa (funciona desde cualquier IP/dominio)
+  if (typeof window !== "undefined") {
+    return path;
+  }
+
+  // En el servidor (SSR): URL absoluta apuntando al mismo proceso
+  const base =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXTAUTH_URL ||
+    "http://localhost:3000";
+  return `${base}${path}`;
+}
+
+function adaptarCiudad(c: CiudadBackend): Ciudad {
+  return {
+    slug: c.slug,
+    nombre: c.nombre,
+    departamento: c.departamento.nombre,
+    imagen: c.imagen,
+    totalPanaderias: c.totalPanaderias,
+  };
+}
+
+/** Obtiene todas las ciudades (público, sin id) */
+export async function obtenerCiudades(): Promise<Ciudad[]> {
+  try {
+    const res = await fetch(apiUrl("/api/ciudades"), { cache: "no-store" });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    return data.ciudades.map(adaptarCiudad);
+  } catch (error) {
+    console.error("Error en obtenerCiudades:", error);
+    return [];
+  }
+}
+
+/**
+ * Búsqueda admin con paginación.
+ * Devuelve ciudades con id, slug, imagen y conteo de panaderías.
+ */
+export async function buscarCiudadesAdmin(filtros: {
+  busqueda?: string;
+  departamento?: string;
+  ordenarPor?: "nombre" | "panaderias";
+  limit?: number;
+  offset?: number;
+}): Promise<{ ciudades: CiudadAdmin[]; total: number }> {
+  try {
+    const params = new URLSearchParams();
+    if (filtros.busqueda?.trim())
+      params.set("busqueda", filtros.busqueda.trim());
+    if (filtros.departamento) params.set("departamento", filtros.departamento);
+    if (filtros.ordenarPor) params.set("ordenarPor", filtros.ordenarPor);
+    if (filtros.limit !== undefined) params.set("limit", String(filtros.limit));
+    if (filtros.offset !== undefined)
+      params.set("offset", String(filtros.offset));
+
+    const res = await fetch(apiUrl(`/api/ciudades?${params}`), {
+      cache: "no-store",
+    });
+    if (!res.ok) return { ciudades: [], total: 0 };
+
+    const data = await res.json();
+    return {
+      ciudades: data.ciudades as CiudadAdmin[],
+      total: data.total,
+    };
+  } catch (error) {
+    console.error("Error en buscarCiudadesAdmin:", error);
+    return { ciudades: [], total: 0 };
+  }
+}
+
+/** Busca ciudades por nombre o departamento (en memoria) */
+export function buscarCiudades(ciudades: Ciudad[], query: string): Ciudad[] {
   const q = normalizar(query);
   if (!q) return [];
 
-  return CIUDADES.filter((c) => {
+  return ciudades.filter((c) => {
     const haystack = normalizar(`${c.nombre} ${c.departamento}`);
     return haystack.includes(q);
   });

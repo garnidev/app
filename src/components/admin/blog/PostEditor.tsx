@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import type { Categoria, PostDetalle } from "@/data/posts";
@@ -25,15 +26,13 @@ type FormData = {
 
 /**
  * Orquestador del formulario de creación/edición de artículos del blog.
- * - Columna izquierda: título + editor de texto enriquecido
- * - Columna derecha: imagen destacada + categoría + keyword + etiquetas
- * - Barra superior: volver + título + acciones (preview, guardar, publicar)
- *
- * Estado local completamente funcional (sin BD).
- * Al enviar, por ahora hace console.log del payload.
- * Cuando haya backend, reemplazar handleGuardar/handlePublicar con fetch.
+ * Conectado al backend:
+ * - POST /api/upload/blog para subir imágenes
+ * - POST /api/posts para crear posts
+ * - PUT /api/posts/[slug] para editar posts existentes
  */
 export function PostEditor({ postInicial }: Props) {
+  const router = useRouter();
   const esEdicion = Boolean(postInicial);
 
   const [form, setForm] = useState<FormData>({
@@ -52,7 +51,10 @@ export function PostEditor({ postInicial }: Props) {
   const [errores, setErrores] = useState<string[]>([]);
 
   /* ─── Handlers de cambio por campo ──────────────────────────────── */
-  const actualizar = <K extends keyof FormData>(campo: K, valor: FormData[K]) => {
+  const actualizar = <K extends keyof FormData>(
+    campo: K,
+    valor: FormData[K],
+  ) => {
     setForm((prev) => ({ ...prev, [campo]: valor }));
   };
 
@@ -62,7 +64,6 @@ export function PostEditor({ postInicial }: Props) {
 
     if (!form.titulo.trim()) errs.push("El título es obligatorio.");
 
-    // Publicación exige más campos
     if (esPublicacion) {
       if (!form.contenido.trim() || form.contenido === "<p></p>") {
         errs.push("El contenido no puede estar vacío.");
@@ -74,9 +75,53 @@ export function PostEditor({ postInicial }: Props) {
     return errs;
   };
 
-  /* ─── Handlers de submit ────────────────────────────────────────── */
-  const handleGuardar = () => {
-    const errs = validar(false);
+  /* ─── Generar slug desde el título ──────────────────────────────── */
+  const generarSlug = (titulo: string): string => {
+    return titulo
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
+  /* ─── Subir imagen al backend (si hay archivo nuevo) ────────────── */
+  const subirImagen = async (archivo: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", archivo);
+
+    const res = await fetch("/api/upload/blog", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Error al subir la imagen");
+    }
+
+    const data = await res.json();
+    return data.url; // ej: "/assets/blog/123456-foto.jpg"
+  };
+
+  /* ─── Adaptar categoría frontend → backend ──────────────────────── */
+  const adaptarCategoria = (cat: Categoria | ""): string => {
+    const mapa: Record<string, string> = {
+      TERRITORIO: "Territorio",
+      INGREDIENTES: "Ingredientes",
+      OFICIOS: "Oficios",
+      HISTORIA: "Historia",
+    };
+    return mapa[cat] || cat;
+  };
+
+  /* ─── Submit unificado: guardar borrador o publicar ─────────────── */
+  const enviarPost = async (estado: "BORRADOR" | "PUBLICADO") => {
+    const esPublicacion = estado === "PUBLICADO";
+    const errs = validar(esPublicacion);
+
     if (errs.length > 0) {
       setErrores(errs);
       return;
@@ -85,38 +130,60 @@ export function PostEditor({ postInicial }: Props) {
     setErrores([]);
     setEnviando(true);
 
-    // Simular envío
-    setTimeout(() => {
-      const payload = {
-        estado: "borrador" as const,
-        ...form,
-      };
-      console.log("📝 Guardando borrador:", payload);
-      alert("Borrador guardado (ver consola para el payload)");
-      setEnviando(false);
-    }, 600);
-  };
+    try {
+      // 1. Si hay archivo nuevo, subirlo primero
+      let imagenUrl = form.imagen.dataUrl || "";
+      if (form.imagen.archivo) {
+        imagenUrl = await subirImagen(form.imagen.archivo);
+      }
 
-  const handlePublicar = () => {
-    const errs = validar(true);
-    if (errs.length > 0) {
-      setErrores(errs);
-      return;
+      // 2. Construir el payload
+      const payload = {
+        slug: esEdicion ? postInicial!.slug : generarSlug(form.titulo),
+        titulo: form.titulo.trim(),
+        descripcion: form.contenido
+          .replace(/<[^>]+>/g, "") // quitar HTML
+          .slice(0, 200), // primeros 200 caracteres como descripción
+        contenido: form.contenido,
+        categoria: adaptarCategoria(form.categoria),
+        keyword: form.keyword.trim() || undefined,
+        imagen: imagenUrl,
+        estado,
+        tags: form.tags.map((label) => ({ label })),
+      };
+
+      // 3. Enviar al backend (POST si crear, PUT si editar)
+      const url = esEdicion
+        ? `/api/posts/${postInicial!.slug}`
+        : "/api/posts";
+      const method = esEdicion ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al guardar el post");
+      }
+
+      // 4. Éxito: redirigir al listado
+      router.push("/admin/blog");
+      router.refresh();
+    } catch (err) {
+      const mensaje =
+        err instanceof Error ? err.message : "Error desconocido";
+      setErrores([mensaje]);
+    } finally {
+      setEnviando(false);
     }
-
-    setErrores([]);
-    setEnviando(true);
-
-    setTimeout(() => {
-      const payload = {
-        estado: "publicado" as const,
-        ...form,
-      };
-      console.log("🚀 Publicando artículo:", payload);
-      alert("Artículo publicado (ver consola para el payload)");
-      setEnviando(false);
-    }, 800);
   };
+
+  const handleGuardar = () => enviarPost("BORRADOR");
+  const handlePublicar = () => enviarPost("PUBLICADO");
 
   return (
     <div className="mt-6">
@@ -150,7 +217,9 @@ export function PostEditor({ postInicial }: Props) {
         <PublishActions
           onGuardar={handleGuardar}
           onPublicar={handlePublicar}
-          previewHref={postInicial?.slug ? `/blog/${postInicial.slug}` : undefined}
+          previewHref={
+            postInicial?.slug ? `/blog/${postInicial.slug}` : undefined
+          }
           enviando={enviando}
         />
       </div>
@@ -172,7 +241,7 @@ export function PostEditor({ postInicial }: Props) {
         </div>
       )}
 
-      {/* ═══ Título del artículo (input grande sin borde) ═══ */}
+      {/* ═══ Título del artículo ═══ */}
       <div className="mt-8">
         <label htmlFor="titulo" className="sr-only">
           Título del artículo
@@ -187,7 +256,7 @@ export function PostEditor({ postInicial }: Props) {
         />
       </div>
 
-      {/* ═══ Grid de 2 columnas (editor + panel lateral) ═══ */}
+      {/* ═══ Grid de 2 columnas ═══ */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px] lg:gap-8">
         {/* ─── Columna izquierda: editor ─── */}
         <div>

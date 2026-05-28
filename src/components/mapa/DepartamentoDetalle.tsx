@@ -1,12 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { getPanaderiasAgrupadasPorCiudad, type Panaderia } from "@/data/panaderias";
+import {
+  agruparPanaderiasPorCiudad,
+  type Panaderia,
+} from "@/data/panaderias";
 import type { Departamento } from "@/data/departamentos";
 
 type Props = {
   departamento: Departamento;
   totalPanaderias: number;
+  panaderias: Panaderia[];
+  cargando?: boolean;
   onSelectPanaderia?: (p: Panaderia) => void;
   panaderiaActivaId?: string;
 };
@@ -14,10 +19,12 @@ type Props = {
 export function DepartamentoDetalle({
   departamento,
   totalPanaderias,
+  panaderias,
+  cargando = false,
   onSelectPanaderia,
   panaderiaActivaId,
 }: Props) {
-  const agrupadas = getPanaderiasAgrupadasPorCiudad(departamento.nombre);
+  const agrupadas = agruparPanaderiasPorCiudad(panaderias);
   const ciudades = Object.keys(agrupadas).sort();
 
   return (
@@ -47,7 +54,22 @@ export function DepartamentoDetalle({
 
       {/* Lista */}
       <div className="flex flex-col">
-        {ciudades.length === 0 ? (
+        {cargando ? (
+          <div className="space-y-3 px-3 py-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 rounded-2xl bg-neutral-50 p-3"
+              >
+                <div className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-neutral-200" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-3/4 animate-pulse rounded bg-neutral-200" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-neutral-200" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : ciudades.length === 0 ? (
           <div className="px-6 py-8 text-center text-sm italic text-neutral-500">
             Aún no hay panaderías registradas en este departamento.
           </div>
@@ -77,9 +99,11 @@ export function DepartamentoDetalle({
                             : "bg-white hover:bg-neutral-50"
                         }`}
                       >
-                        <div className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-2 ${
-                          activa ? "ring-brand-green" : "ring-brand-green/30"
-                        }`}>
+                        <div
+                          className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-2 ${
+                            activa ? "ring-brand-green" : "ring-brand-green/30"
+                          }`}
+                        >
                           <Image
                             src={p.imagen}
                             alt={p.nombre}

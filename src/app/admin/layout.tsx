@@ -16,12 +16,7 @@ export const metadata: Metadata = {
  * TODO: cuando tengamos backend real, proteger este layout con middleware
  * que valide la sesión. Si no hay sesión, redirect a /login.
  */
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const usuario = getCurrentUser();
-
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const usuario = await getCurrentUser();
   return <AdminShell usuario={usuario}>{children}</AdminShell>;
 }

@@ -58,6 +58,18 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: "blog",
         roles: ["admin"],
       },
+      {
+        href: "/admin/comentarios",
+        label: "Moderación de comentarios",
+        icon: "reportes",
+        roles: ["admin"],
+      },
+      {
+        href: "/admin/ciudades",
+        label: "Gestión de ciudades",
+        icon: "config",
+        roles: ["admin"],
+      },
     ],
   },
   // TODO: agregar más grupos según crezca el admin

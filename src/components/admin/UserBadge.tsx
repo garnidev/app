@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import { ROL_LABEL, type Usuario } from "@/lib/auth";
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 
 /**
  * Badge del usuario en el pie del sidebar
- * - Expandido: pill verde con avatar + nombre + rol + flecha (abre menú)
+ * - Expandido: pill verde con avatar + nombre + rol + flecha
  * - Colapsado: solo el avatar circular
  * - Click abre un popover con opciones (perfil, cerrar sesión)
  */
@@ -22,21 +23,25 @@ export function UserBadge({ usuario, colapsado = false }: Props) {
 
   if (colapsado) {
     return (
-      <button
-        type="button"
-        onClick={() => setAbierto((v) => !v)}
-        aria-label={`Menú de usuario: ${usuario.nombre}`}
-        className="relative mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand-green ring-2 ring-brand-greenDark/40 transition hover:scale-105"
-      >
-        <Image
-          src={usuario.avatar}
-          alt=""
-          width={40}
-          height={40}
-          className="h-10 w-10 rounded-full object-cover"
-        />
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setAbierto((v) => !v)}
+          aria-label={`Menú de usuario: ${usuario.nombre}`}
+          aria-expanded={abierto}
+          className="relative mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand-green ring-2 ring-brand-greenDark/40 transition hover:scale-105"
+        >
+          <Image
+            src={usuario.avatar}
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+        </button>
+
         {abierto && <UserPopover onClose={() => setAbierto(false)} colapsado />}
-      </button>
+      </div>
     );
   }
 
@@ -163,10 +168,13 @@ function UserPopover({
           </li>
         </ul>
         <div className="border-t border-neutral-100">
-          <Link
-            href="/login"
-            onClick={onClose}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              signOut({ callbackUrl: "/login" });
+            }}
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
           >
             <svg
               viewBox="0 0 24 24"
@@ -183,7 +191,7 @@ function UserPopover({
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
             Cerrar sesión
-          </Link>
+          </button>
         </div>
       </div>
     </>

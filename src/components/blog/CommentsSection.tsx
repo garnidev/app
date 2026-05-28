@@ -1,50 +1,119 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Comentario } from "@/data/posts";
 
 type Props = {
-  comentariosIniciales: Comentario[];
+  slug: string;
 };
 
 /**
  * Sección de comentarios del artículo
- * - Renderiza lista de comentarios (con expansión "Ver más/menos" para textos largos)
- * - Formulario que agrega comentarios al estado local (no persiste al recargar)
+ * ───────────────────────────────────
+ * - Carga comentarios aprobados del backend al montar
+ * - El submit envía al backend y queda en estado PENDIENTE (moderación)
+ * - Muestra mensaje de éxito explicando la moderación
  *
- * Cuando se integre la BD, el handler de submit hará un POST a la API,
- * y la lista inicial vendrá como prop desde el server component padre.
+ * Endpoint: /api/posts/[slug]/comentarios
  */
-export function CommentsSection({ comentariosIniciales }: Props) {
-  const [comentarios, setComentarios] =
-    useState<Comentario[]>(comentariosIniciales);
+export function CommentsSection({ slug }: Props) {
+  // Estado de la lista de comentarios
+  const [comentarios, setComentarios] = useState<Comentario[]>([]);
+  const [cargando, setCargando] = useState(true);
+
+  // Estado del formulario
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [exito, setExito] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Cargar comentarios aprobados al montar
+  useEffect(() => {
+    let activo = true;
+
+    (async () => {
+      try {
+        setCargando(true);
+        const res = await fetch(`/api/posts/${slug}/comentarios`);
+        if (!res.ok) throw new Error("Error al cargar comentarios");
+
+        const data = await res.json();
+
+        if (activo) {
+          // Adaptar formato del backend al frontend
+          const adaptados: Comentario[] = data.comentarios.map(
+            (c: {
+              id: string;
+              autor: string;
+              avatar: string | null;
+              texto: string;
+              fecha: string;
+            }) => ({
+              id: c.id,
+              autor: c.autor,
+              avatar: c.avatar || "/assets/blog/avatar-default.jpg",
+              texto: c.texto,
+              fechaISO: c.fecha.split("T")[0],
+            })
+          );
+          setComentarios(adaptados);
+        }
+      } catch (err) {
+        console.error("Error cargando comentarios:", err);
+      } finally {
+        if (activo) setCargando(false);
+      }
+    })();
+
+    return () => {
+      activo = false;
+    };
+  }, [slug]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre.trim() || !email.trim() || !texto.trim()) return;
 
     setEnviando(true);
+    setError(null);
+    setExito(false);
 
-    // Simulamos un pequeño delay para dar sensación de envío
-    setTimeout(() => {
-      const nuevo: Comentario = {
-        id: `c-${Date.now()}`,
-        autor: nombre.trim(),
-        avatar: "/assets/blog/avatar-default.jpg",
-        texto: texto.trim(),
-        fechaISO: new Date().toISOString().slice(0, 10),
-      };
-      setComentarios((prev) => [...prev, nuevo]);
+    try {
+      const res = await fetch(`/api/posts/${slug}/comentarios`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          texto: texto.trim(),
+          autor: nombre.trim(),
+          // email no se envía al backend (estructura no lo guarda)
+          // se usa solo para validación frontend o futuras notificaciones
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al enviar el comentario");
+      }
+
+      // Éxito: limpiar formulario y mostrar mensaje
       setNombre("");
       setEmail("");
       setTexto("");
+      setExito(true);
+
+      // Ocultar mensaje de éxito después de 6 segundos
+      setTimeout(() => setExito(false), 6000);
+    } catch (err) {
+      const mensaje =
+        err instanceof Error ? err.message : "Error desconocido";
+      setError(mensaje);
+    } finally {
       setEnviando(false);
-    }, 300);
+    }
   };
 
   return (
@@ -70,7 +139,9 @@ export function CommentsSection({ comentariosIniciales }: Props) {
 
       {/* Lista de comentarios */}
       <div className="mt-6 space-y-4">
-        {comentarios.length === 0 ? (
+        {cargando ? (
+          <CommentSkeleton />
+        ) : comentarios.length === 0 ? (
           <p className="rounded-2xl bg-neutral-50 px-6 py-5 text-center text-sm text-neutral-500">
             Sé el primero en comentar este artículo.
           </p>
@@ -140,9 +211,58 @@ export function CommentsSection({ comentariosIniciales }: Props) {
             placeholder="¿Qué piensas sobre este artículo?"
             rows={5}
             required
+            minLength={5}
+            maxLength={2000}
             className="w-full rounded-2xl border border-neutral-200 px-5 py-4 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-brand-green focus:outline-none focus:ring-2 focus:ring-brand-green/30"
           />
         </div>
+
+        {/* Mensaje de éxito */}
+        {exito && (
+          <div className="mt-4 rounded-2xl border border-brand-green/30 bg-brand-greenSoft px-5 py-4 text-sm text-brand-greenDark">
+            <p className="flex items-start gap-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="mt-0.5 h-5 w-5 shrink-0 text-brand-green"
+                aria-hidden="true"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>
+                <strong>¡Comentario recibido!</strong> Tu mensaje será publicado
+                una vez que sea revisado por un moderador.
+              </span>
+            </p>
+          </div>
+        )}
+
+        {/* Mensaje de error */}
+        {error && (
+          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+            <p className="flex items-start gap-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>{error}</span>
+            </p>
+          </div>
+        )}
 
         <div className="mt-5 flex justify-end">
           <button
@@ -222,6 +342,28 @@ function CommentCard({ comentario }: { comentario: Comentario }) {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SKELETON DE CARGA
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function CommentSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2].map((i) => (
+        <div
+          key={i}
+          className="relative ml-10 rounded-2xl bg-white p-5 pl-16 shadow-soft ring-1 ring-black/5 md:ml-12 md:p-6 md:pl-20"
+        >
+          <div className="absolute -left-10 -top-1 h-20 w-20 animate-pulse rounded-full bg-neutral-200" />
+          <div className="h-5 w-32 animate-pulse rounded bg-neutral-200" />
+          <div className="mt-3 h-4 w-full animate-pulse rounded bg-neutral-200" />
+          <div className="mt-2 h-4 w-2/3 animate-pulse rounded bg-neutral-200" />
+        </div>
+      ))}
     </div>
   );
 }

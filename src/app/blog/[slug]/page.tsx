@@ -10,13 +10,11 @@ import { getAllSlugs, getPostBySlug } from "@/data/posts";
 
 /* ═══════════════════════════════════════════════════════════════════════
    GENERACIÓN ESTÁTICA
-   ─────────────────────────────────────────────────────────────────────
-   Next.js pre-genera una página por cada slug conocido en build time.
-   Cuando conectes la BD, esta función hará un query a los slugs reales.
    ═══════════════════════════════════════════════════════════════════════ */
 
-export function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -29,7 +27,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return { title: "Artículo no encontrado | Masa Madre" };
@@ -58,7 +56,7 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) notFound();
 
@@ -72,9 +70,9 @@ export default async function PostPage({
 
         {/* Contenido del artículo */}
         <section className="container-site relative z-10 pb-10">
-          <PostContent lead={post.descripcion} contenido={post.contenido} />
+          <PostContent contenido={post.contenido} />
           <PostTags tags={post.tags} />
-          <CommentsSection comentariosIniciales={post.comentarios} />
+          <CommentsSection slug={slug} />
         </section>
       </main>
     </>

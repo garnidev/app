@@ -4,19 +4,17 @@ import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { SinResultados } from "./SinResultados";
 import {
-  DEPARTAMENTOS,
   buscarUbicaciones,
   getDepartamentoPorSlug,
-  getDepartamentoPorNombre,
   type Departamento,
   type Ubicacion,
 } from "@/data/departamentos";
 import {
-  buscarPanaderias,
-  contarPanaderiasPorDepartamento,
-  MOCK_PANADERIAS,
+  contarMarkersPorDepartamento,
   type Panaderia,
+  type PanaderiaMarker,
 } from "@/data/panaderias";
+import type { Ciudad } from "@/data/ciudades";
 import { DepartamentoCard } from "./DepartamentoCard";
 import { PanaderiaCard } from "./PanaderiaCard";
 import { DepartamentoDetalle } from "./DepartamentoDetalle";
@@ -24,7 +22,25 @@ import { DepartamentoDetalle } from "./DepartamentoDetalle";
 type Props = {
   value: string;
   onChange: (v: string) => void;
+
+  // Datos del backend (recibidos del padre)
+  markers: PanaderiaMarker[];
+  departamentos: Departamento[];
+  ciudades: Ciudad[];
+
+  // Estado del departamento activo (controlado desde el padre)
+  departamentoActivo: Departamento | null;
+  panaderiasDepto: Panaderia[];
+  cargandoDepto: boolean;
+  cargandoInicial: boolean;
+
+  // Resultados de búsqueda (controlado desde el padre)
+  panaderiasBusqueda: Panaderia[];
+  cargandoBusqueda: boolean;
+
+  // Callbacks
   onSelectDepartamento?: (depto: Departamento) => void;
+  onCerrarDepartamento?: () => void;
   onSelectPanaderia?: (panaderia: Panaderia) => void;
   onAbrirChange?: (abierto: boolean) => void;
   panaderiaActivaId?: string;
@@ -51,17 +67,26 @@ function useIsMobile(): boolean {
 
   return isMobile;
 }
+
 export function BuscadorMapa({
   value,
   onChange,
+  markers,
+  departamentos,
+  ciudades,
+  departamentoActivo,
+  panaderiasDepto,
+  cargandoDepto,
+  cargandoInicial,
+  panaderiasBusqueda,
+  cargandoBusqueda,
   onSelectDepartamento,
+  onCerrarDepartamento,
   onSelectPanaderia,
   onAbrirChange,
   panaderiaActivaId,
 }: Props) {
   const [abierto, setAbiertoLocal] = useState(false);
-  const [departamentoActivo, setDepartamentoActivo] =
-    useState<Departamento | null>(null);
   const contenedorRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -77,19 +102,19 @@ export function BuscadorMapa({
   const enDetalle = departamentoActivo !== null;
   const panelVisible = abierto || enDetalle;
 
-  const ubicacionesResult = useMemo(() => buscarUbicaciones(value), [value]);
-
-  const panaderiasResult = useMemo(
-    () => (tieneBusqueda ? buscarPanaderias(value) : []),
-    [value, tieneBusqueda],
+  /* ─── Búsqueda de ubicaciones (in-memory sobre deptos + ciudades) ─ */
+  const ubicacionesResult = useMemo(
+    () => buscarUbicaciones(departamentos, ciudades, markers, value),
+    [departamentos, ciudades, markers, value],
   );
 
-  const totalResultados = ubicacionesResult.length + panaderiasResult.length;
+  const totalResultados = ubicacionesResult.length + panaderiasBusqueda.length;
 
   const sinResultados =
     tieneBusqueda &&
+    !cargandoBusqueda &&
     ubicacionesResult.length === 0 &&
-    panaderiasResult.length === 0;
+    panaderiasBusqueda.length === 0;
 
   /** Cierra al hacer click afuera */
   useEffect(() => {
@@ -98,13 +123,10 @@ export function BuscadorMapa({
     const handleClickAfuera = (e: MouseEvent) => {
       const target = e.target as Element;
 
-      // 1) Click dentro del buscador → ignorar
       if (contenedorRef.current && contenedorRef.current.contains(target)) {
         return;
       }
 
-      // 2) Click dentro de un overlay del mapa (tarjeta de panadería, modal de
-      //    compartir, marker, controles del mapa) → ignorar
       if (
         target.closest("[data-mapa-overlay]") ||
         target.closest("[role='dialog']") ||
@@ -114,9 +136,6 @@ export function BuscadorMapa({
         return;
       }
 
-      // 3) Click realmente afuera → cerrar buscador
-      //    NOTA: NO limpiamos departamentoActivo, dejamos que el usuario
-      //    decida cuándo cerrar el detalle (con el X del input)
       setAbierto(false);
     };
 
@@ -125,26 +144,25 @@ export function BuscadorMapa({
   }, [panelVisible]);
 
   const seleccionarDepartamento = (depto: Departamento) => {
-    setDepartamentoActivo(depto);
     onSelectDepartamento?.(depto);
   };
 
   const seleccionarUbicacion = (u: Ubicacion) => {
     if (u.tipo === "departamento" && u.slug) {
-      const depto = getDepartamentoPorSlug(u.slug);
+      const depto = getDepartamentoPorSlug(departamentos, u.slug);
       if (depto) seleccionarDepartamento(depto);
     } else if (u.tipo === "ciudad") {
-      const ciudad = u.nombre;
-      const primeraPanaderia = encontrarPanaderiaPorCiudad(ciudad);
-      if (primeraPanaderia) {
-        const depto = getDepartamentoPorNombre(primeraPanaderia.departamento);
+      // Buscar el departamento al que pertenece la ciudad
+      const ciudad = ciudades.find((c) => c.nombre === u.nombre);
+      if (ciudad) {
+        const depto = departamentos.find((d) => d.nombre === ciudad.departamento);
         if (depto) seleccionarDepartamento(depto);
       }
     }
   };
 
   const cerrarDetalle = () => {
-    setDepartamentoActivo(null);
+    onCerrarDepartamento?.();
     onChange("");
   };
 
@@ -164,7 +182,6 @@ export function BuscadorMapa({
       if (!isMobile || !isDragging) return;
       const currentY = e.touches[0].clientY;
       const diff = currentY - touchStartY.current;
-      // Solo permitimos swipe hacia abajo (positivo)
       if (diff > 0) {
         setSwipeOffset(diff);
       }
@@ -177,13 +194,12 @@ export function BuscadorMapa({
     if (!isMobile) return;
     setIsDragging(false);
 
-    // Si arrastró más de 100px hacia abajo, cierra
     if (swipeOffset > 100) {
       setAbierto(false);
-      if (enDetalle) setDepartamentoActivo(null);
+      if (enDetalle) onCerrarDepartamento?.();
     }
     setSwipeOffset(0);
-  }, [isMobile, swipeOffset, enDetalle]);
+  }, [isMobile, swipeOffset, enDetalle, onCerrarDepartamento]);
 
   return (
     <div
@@ -196,7 +212,7 @@ export function BuscadorMapa({
         transition: isDragging ? "none" : "transform 300ms ease-out",
       }}
       className={`relative flex flex-col bg-white transition-all ${
-        panelVisible ?  "h-full shadow-2xl " : "h-auto rounded-full "
+        panelVisible ? "h-full shadow-2xl " : "h-auto rounded-full "
       } ${panelVisible && isMobile ? "rounded-t-3xl" : ""}`}
     >
       {/* Drag handle visible solo en móvil cuando el panel está abierto */}
@@ -211,7 +227,7 @@ export function BuscadorMapa({
         </div>
       )}
 
-      {/* Header móvil: título + botón X (solo cuando panel abierto en móvil) */}
+      {/* Header móvil: título + botón X */}
       {panelVisible && isMobile && !enDetalle && (
         <div className="flex shrink-0 items-center justify-between px-5 pb-2 pt-2">
           <h2 className="text-base font-bold italic text-support-navy">
@@ -221,7 +237,7 @@ export function BuscadorMapa({
             type="button"
             onClick={() => {
               setAbierto(false);
-              if (enDetalle) setDepartamentoActivo(null);
+              if (enDetalle) onCerrarDepartamento?.();
             }}
             aria-label="Cerrar panel"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 transition hover:bg-neutral-200"
@@ -246,9 +262,9 @@ export function BuscadorMapa({
         className={`relative shrink-0 ${
           panelVisible
             ? isMobile
-              ? "px-4 pb-3" // móvil con panel abierto: padding reducido
-              : "border-b border-neutral-100 p-4" // desktop con panel abierto
-            : "p-3" // cápsula sola
+              ? "px-4 pb-3"
+              : "border-b border-neutral-100 p-4"
+            : "p-3"
         }`}
       >
         <input
@@ -281,7 +297,7 @@ export function BuscadorMapa({
             aria-label="Volver a la lista"
             onClick={cerrarDetalle}
             className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 ${
-              panelVisible ? (isMobile ? "right-6" : "right-6") : "right-5"
+              panelVisible ? "right-6" : "right-5"
             }`}
           >
             <svg
@@ -301,8 +317,10 @@ export function BuscadorMapa({
             type="button"
             aria-label="Buscar"
             onClick={() => setAbierto(true)}
-            className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 ${
-              panelVisible ? (isMobile ? "right-6" : "right-6") : "right-5"
+            className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full transition hover:bg-neutral-100 ${
+              panelVisible
+                ? "right-6 text-neutral-500"
+                : "right-5 text-brand-green"
             }`}
           >
             <svg
@@ -322,15 +340,18 @@ export function BuscadorMapa({
         )}
       </div>
 
-      {/* Contenido scrolleable que ocupa el resto del alto */}
+      {/* Contenido scrolleable */}
       {panelVisible && (
         <div className="flex-1 overflow-y-auto">
           {enDetalle ? (
             <DepartamentoDetalle
               departamento={departamentoActivo!}
-              totalPanaderias={contarPanaderiasPorDepartamento(
-                departamentoActivo!.nombre,
+              totalPanaderias={contarMarkersPorDepartamento(
+                markers,
+                departamentoActivo!.slug,
               )}
+              panaderias={panaderiasDepto}
+              cargando={cargandoDepto}
               onSelectPanaderia={(p) => onSelectPanaderia?.(p)}
               panaderiaActivaId={panaderiaActivaId}
             />
@@ -342,19 +363,26 @@ export function BuscadorMapa({
                     sinResultados ? "text-red-600" : "text-neutral-700"
                   }`}
                 >
-                  {totalResultados}{" "}
-                  {totalResultados === 1 ? "resultado" : "resultados"}
+                  {cargandoBusqueda
+                    ? "Buscando..."
+                    : `${totalResultados} ${
+                        totalResultados === 1 ? "resultado" : "resultados"
+                      }`}
                 </span>
               </div>
               <ResultadosBusqueda
                 ubicaciones={ubicacionesResult}
-                panaderias={panaderiasResult}
+                panaderias={panaderiasBusqueda}
+                cargando={cargandoBusqueda}
                 onSelectUbicacion={seleccionarUbicacion}
                 onSelectPanaderia={(p) => onSelectPanaderia?.(p)}
               />
             </>
           ) : (
             <ListaDepartamentos
+              departamentos={departamentos}
+              markers={markers}
+              cargando={cargandoInicial}
               onSelectDepartamento={seleccionarDepartamento}
             />
           )}
@@ -369,10 +397,42 @@ export function BuscadorMapa({
    ═══════════════════════════════════════════════════════════════════════ */
 
 function ListaDepartamentos({
+  departamentos,
+  markers,
+  cargando,
   onSelectDepartamento,
 }: {
+  departamentos: Departamento[];
+  markers: PanaderiaMarker[];
+  cargando: boolean;
   onSelectDepartamento: (depto: Departamento) => void;
 }) {
+  if (cargando) {
+    return (
+      <>
+        <div className="flex items-baseline justify-between border-t border-neutral-100 px-6 py-3">
+          <h2 className="text-sm font-semibold italic text-neutral-700 md:text-base">
+            Departamentos
+          </h2>
+          <div className="h-4 w-8 animate-pulse rounded bg-neutral-200" />
+        </div>
+        <ul className="flex flex-col gap-1 px-3 pb-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <li key={i}>
+              <div className="flex items-center gap-4 rounded-2xl p-3">
+                <div className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-neutral-200" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-neutral-200" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-neutral-200" />
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="flex items-baseline justify-between border-t border-neutral-100 px-6 py-3">
@@ -380,16 +440,19 @@ function ListaDepartamentos({
           Departamentos
         </h2>
         <span className="text-sm font-bold italic text-neutral-700 md:text-base">
-          {DEPARTAMENTOS.length}
+          {departamentos.length}
         </span>
       </div>
 
       <ul role="listbox" className="flex flex-col gap-1 px-3 pb-3">
-        {DEPARTAMENTOS.map((depto) => (
+        {departamentos.map((depto) => (
           <li key={depto.slug} role="option" aria-selected={false}>
             <DepartamentoCard
               departamento={depto}
-              cantidadPanaderias={contarPanaderiasPorDepartamento(depto.nombre)}
+              cantidadPanaderias={contarMarkersPorDepartamento(
+                markers,
+                depto.slug,
+              )}
               onClick={onSelectDepartamento}
             />
           </li>
@@ -402,15 +465,36 @@ function ListaDepartamentos({
 function ResultadosBusqueda({
   ubicaciones,
   panaderias,
+  cargando,
   onSelectUbicacion,
   onSelectPanaderia,
 }: {
   ubicaciones: Ubicacion[];
   panaderias: Panaderia[];
+  cargando: boolean;
   onSelectUbicacion: (u: Ubicacion) => void;
   onSelectPanaderia: (p: Panaderia) => void;
 }) {
-  // Estado vacío: sin coincidencias en ninguno de los 2 bloques
+  if (cargando) {
+    return (
+      <div className="space-y-3 px-3 py-4">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="flex items-center gap-4 rounded-2xl bg-neutral-50 p-3"
+          >
+            <div className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-neutral-200" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-3/4 animate-pulse rounded bg-neutral-200" />
+              <div className="h-3 w-1/2 animate-pulse rounded bg-neutral-200" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Estado vacío
   if (ubicaciones.length === 0 && panaderias.length === 0) {
     return <SinResultados />;
   }
@@ -502,21 +586,5 @@ function UbicacionCard({
         </p>
       </div>
     </button>
-  );
-}
-
-/* ─── Helper interno ──────────────────────────────────────────────── */
-
-function encontrarPanaderiaPorCiudad(ciudad: string): Panaderia | undefined {
-  return MOCK_PANADERIAS.find(
-    (p) =>
-      p.ciudad
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") ===
-      ciudad
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, ""),
   );
 }

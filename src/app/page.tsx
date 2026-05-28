@@ -7,12 +7,12 @@ import { PuntosAliados } from "@/components/PuntosAliados";
 import { Embajadores } from "@/components/Embajadores";
 import { Testimonios } from "@/components/Testimonios";
 import { Footer } from "@/components/Footer";
-import { SplashScreen } from "@/components/SplashScreen";
+// import { SplashScreen } from "@/components/SplashScreen";
 
 export default function HomePage() {
   return (
     <>
-      <SplashScreen />
+      {/* <SplashScreen /> */}
       <GovBar />
       <Header />
       <main>

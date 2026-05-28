@@ -3,11 +3,14 @@ import Link from "next/link";
 import type { Post } from "@/data/posts";
 import { EstadoBadge } from "./EstadoBadge";
 import { TagChip, colorParaTag } from "./TagChip";
+import { PostActions } from "./PostActions";
 
 type Props = {
   post: Post & {
     /** Tags opcionales (vienen de PostDetalle cuando aplica) */
     tags?: { label: string; icon: string }[];
+    /** Total de comentarios del post (vienen del backend) */
+    totalComentarios?: number;
   };
 };
 
@@ -26,11 +29,12 @@ function formatearFecha(iso: string): string {
  * - Thumbnail cuadrado
  * - Título + metadatos (estado, fecha, tiempo, visitas)
  * - Tags
- * - Botones de acción: Editar + Archivar
+ * - Botones de acción: Editar + Comentarios + Archivar
  */
 export function PostRow({ post }: Props) {
   const estado = post.estado ?? "publicado";
   const visitas = post.visitas ?? 0;
+  const totalComentarios = post.totalComentarios ?? 0;
 
   return (
     <article className="group flex flex-col gap-4 rounded-2xl bg-white p-4 ring-1 ring-neutral-200 transition hover:shadow-md md:flex-row md:items-center md:p-5">
@@ -90,48 +94,9 @@ export function PostRow({ post }: Props) {
       </div>
 
       {/* Botones de acción */}
-      <div className="flex shrink-0 flex-wrap items-center gap-2 md:flex-nowrap">
-        <Link
-          href={`/admin/blog/${post.slug}/editar`}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-greenSoft px-4 py-2 text-sm font-bold text-brand-green transition hover:bg-brand-green hover:text-white"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-            aria-hidden="true"
-          >
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-          Editar
-        </Link>
-
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-brand-purple/40 bg-white px-4 py-2 text-sm font-bold text-brand-purpleDark transition hover:bg-brand-purple/5"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-            aria-hidden="true"
-          >
-            <rect x="3" y="4" width="18" height="4" rx="1" />
-            <path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" />
-            <path d="M10 12h4" />
-          </svg>
-          Archivar
-        </button>
-      </div>
+      
+        <PostActions slug={post.slug} totalComentarios={totalComentarios} />
+      
     </article>
   );
 }

@@ -243,3 +243,179 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ESTILOS PARA CONTENIDO TIPTAP (.tiptap-content)
+   ═══════════════════════════════════════════════════════════════════
+   Aplica estilos a los elementos HTML generados por el editor Tiptap
+   en el detalle del post del blog.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.tiptap-content {
+  color: rgb(64 64 64); /* neutral-700 */
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Párrafos */
+.tiptap-content p {
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .tiptap-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+/* H2 — con separador arriba */
+.tiptap-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgb(229 229 229); /* neutral-200 */
+  font-size: 1rem;
+  font-weight: 700;
+  font-style: italic;
+  color: rgb(15 27 61); /* support-navy */
+}
+
+@media (min-width: 768px) {
+  .tiptap-content h2 {
+    font-size: 1.125rem;
+  }
+}
+
+/* H3 */
+.tiptap-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-style: italic;
+  color: rgb(15 27 61); /* support-navy */
+}
+
+/* H1 (por si lo usan) */
+.tiptap-content h1 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
+  color: rgb(15 27 61);
+}
+
+.tiptap-content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  border-left: 4px solid rgb(229 229 229);
+  font-style: italic;
+  color: rgb(82 82 82);
+}
+
+@media (min-width: 768px) {
+  .tiptap-content blockquote {
+    padding-left: 2rem;
+    font-size: 1.05rem;
+  }
+}
+
+.tiptap-content blockquote p {
+  margin-bottom: 0.75rem;
+  color: rgb(82 82 82);
+}
+
+.tiptap-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Separadores horizontales */
+.tiptap-content hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid rgb(229 229 229);
+}
+
+/* Negrita */
+.tiptap-content strong {
+  font-weight: 700;
+  color: rgb(23 23 23); /* neutral-900 */
+}
+
+/* Itálica */
+.tiptap-content em {
+  font-style: italic;
+}
+
+/* Enlaces */
+.tiptap-content a {
+  font-weight: 600;
+  color: rgb(124 58 237); /* brand-purple */
+  text-decoration: underline;
+  text-decoration-color: rgb(124 58 237 / 0.4);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 200ms;
+}
+
+.tiptap-content a:hover {
+  text-decoration-color: rgb(124 58 237);
+}
+
+/* Listas no ordenadas */
+.tiptap-content ul {
+  margin-bottom: 1.25rem;
+  margin-left: 1.25rem;
+  list-style-type: disc;
+}
+
+.tiptap-content ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* Listas ordenadas */
+.tiptap-content ol {
+  margin-bottom: 1.25rem;
+  margin-left: 1.25rem;
+  list-style-type: decimal;
+}
+
+.tiptap-content ol li {
+  margin-bottom: 0.5rem;
+}
+
+/* Imágenes inline (si Tiptap permite agregar imágenes en el contenido) */
+.tiptap-content img {
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Code (inline) */
+.tiptap-content code {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background-color: rgb(245 245 245); /* neutral-100 */
+  font-size: 0.875rem;
+  font-family: ui-monospace, monospace;
+  color: rgb(220 38 38); /* red-600 */
+}
+
+/* Code block */
+.tiptap-content pre {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: rgb(23 23 23); /* neutral-900 */
+  color: rgb(245 245 245);
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.tiptap-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 /**
@@ -18,14 +20,39 @@ import { useState } from "react";
  */
 
 export default function LoginPage() {
+  const router = useRouter();
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: conectar con backend cuando esté listo
-    console.log("Login:", { email, password });
+    setCargando(true);
+    setError(null);
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Email o contraseña incorrectos");
+        setCargando(false);
+        return;
+      }
+
+      // Login exitoso → redirigir a /admin
+      router.push("/admin");
+      router.refresh();
+    } catch (err) {
+      console.error("Error en login:", err);
+      setError("Ocurrió un error. Intenta de nuevo.");
+      setCargando(false);
+    }
   };
 
   return (
@@ -44,8 +71,8 @@ export default function LoginPage() {
         />
         {/* Capa de degradado adicional para legibilidad del texto */}
         <div
-          // className="absolute inset-0 bg-gradient-to-b from-brand-purple/20 via-brand-purple/50 to-[#681970]/80"
-          // aria-hidden="true"
+        // className="absolute inset-0 bg-gradient-to-b from-brand-purple/20 via-brand-purple/50 to-[#681970]/80"
+        // aria-hidden="true"
         />
       </div>
 
@@ -222,12 +249,20 @@ export default function LoginPage() {
                 </button>
               </div>
 
+              {/* Mensaje de error */}
+              {error && (
+                <p className="text-center text-sm font-medium text-red-600">
+                  {error}
+                </p>
+              )}
+
               {/* Botón: Iniciar sesión */}
               <button
                 type="submit"
-                className="mt-2 w-full rounded-full bg-brand-green py-4 text-base font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-greenDark hover:shadow-lg"
+                disabled={cargando}
+                className="mt-2 w-full rounded-full bg-brand-green py-4 text-base font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-greenDark hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
-                Iniciar sesión
+                {cargando ? "Iniciando sesión..." : "Iniciar sesión"}
               </button>
 
               {/* Texto inferior: Regístrate */}
