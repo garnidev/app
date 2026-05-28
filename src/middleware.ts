@@ -1,27 +1,18 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig } from "@/auth.config";
 
 /**
- * Middleware de protección de rutas.
+ * Middleware de protección de rutas (Edge Runtime).
  *
- * - /admin/* requiere sesión activa
- * - Si no hay sesión, redirige a /login
+ * Importa solo authConfig (sin Prisma ni bcryptjs), por lo que
+ * el bundle se mantiene bajo el límite de 1 MB de Vercel.
+ *
+ * La lógica de autorización está en authConfig.callbacks.authorized.
  */
+export const { auth: middleware } = NextAuth(authConfig);
 
-export default auth((req) => {
-  const isAuth = !!req.auth;
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
+export default middleware;
 
-  if (isAdminRoute && !isAuth) {
-    const loginUrl = new URL("/login", req.nextUrl.origin);
-    return NextResponse.redirect(loginUrl);
-  }
-});
-
-/**
- * Configuración del matcher: qué rutas pasa por el middleware.
- * Excluimos archivos estáticos y API routes para performance.
- */
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|assets).*)"],
 };

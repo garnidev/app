@@ -3,25 +3,17 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import type { Rol } from "@prisma/client";
+import { authConfig } from "@/auth.config";
 
 /**
- * Configuración central de Auth.js v5
- * ─────────────────────────────────────
- * - Provider: Credentials (email + password)
- * - Adapter: Prisma (usa nuestra BD PostgreSQL)
- * - Strategy: JWT (más simple, sin guardar sesiones en BD)
+ * Configuración completa de Auth.js v5 (Node Runtime).
+ * Se usa en API routes, Server Components y Server Actions.
+ * NO importable desde middleware (incluye Prisma + bcryptjs).
  */
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
+
   adapter: PrismaAdapter(prisma),
-
-  session: { strategy: "jwt" },
-
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
 
   providers: [
     Credentials({
@@ -35,7 +27,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Buscar usuario por email
         const usuario = await prisma.usuario.findUnique({
           where: { email: credentials.email as string },
         });
@@ -44,17 +35,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Verificar contraseña
         const passwordCorrecta = await compare(
           credentials.password as string,
-          usuario.passwordHash
+          usuario.passwordHash,
         );
 
         if (!passwordCorrecta) {
           return null;
         }
 
-        // Retornar datos del usuario (van al JWT)
         return {
           id: usuario.id,
           email: usuario.email,
@@ -65,30 +54,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-
-  callbacks: {
-    /**
-     * Se ejecuta al crear el JWT.
-     * Agregamos info custom (rol) al token.
-     */
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.rol = user.rol;
-      }
-      return token;
-    },
-
-    /**
-     * Se ejecuta al leer la sesión.
-     * Expone los datos del token al cliente.
-     */
-    async session({ session, token }) {
-  if (token && session.user) {
-    session.user.id = token.id as string;
-    session.user.rol = token.rol as Rol;
-  }
-  return session;
-},
-  },
 });
