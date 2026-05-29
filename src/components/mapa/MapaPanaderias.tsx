@@ -19,10 +19,7 @@ import {
   type Panaderia,
   type PanaderiaMarker,
 } from "@/data/panaderias";
-import {
-  obtenerDepartamentos,
-  type Departamento,
-} from "@/data/departamentos";
+import { obtenerDepartamentos, type Departamento } from "@/data/departamentos";
 import { obtenerCiudades, type Ciudad } from "@/data/ciudades";
 import { BuscadorMapa } from "./BuscadorMapa";
 import { TarjetaPromo } from "./TarjetaPromo";
@@ -192,33 +189,30 @@ export function MapaPanaderias() {
   );
 
   /** Selecciona un departamento: carga sus panaderías + flyTo */
-  const handleSelectDepartamento = useCallback(
-    async (depto: Departamento) => {
-      setDepartamentoActivo(depto);
-      setPanaderiaActiva(null);
-      setCargandoDepto(true);
+  const handleSelectDepartamento = useCallback(async (depto: Departamento) => {
+    setDepartamentoActivo(depto);
+    setPanaderiaActiva(null);
+    setCargandoDepto(true);
 
-      // FlyTo al departamento
-      mapRef.current?.flyTo({
-        center: depto.coordsCentro,
-        zoom: depto.zoomNivel,
-        duration: 2000,
-      });
+    // FlyTo al departamento
+    mapRef.current?.flyTo({
+      center: depto.coordsCentro,
+      zoom: depto.zoomNivel,
+      duration: 2000,
+    });
 
-      // Cargar panaderías del departamento
-      try {
-        const panaderias = await obtenerPanaderiasPorDepartamento(depto.slug);
-        setPanaderiasDepto(panaderias);
-      } catch (error) {
-        console.error("Error cargando panaderías del depto:", error);
-      } finally {
-        setCargandoDepto(false);
-      }
-    },
-    [],
-  );
+    // Cargar panaderías del departamento
+    try {
+      const panaderias = await obtenerPanaderiasPorDepartamento(depto.slug);
+      setPanaderiasDepto(panaderias);
+    } catch (error) {
+      console.error("Error cargando panaderías del depto:", error);
+    } finally {
+      setCargandoDepto(false);
+    }
+  }, []);
 
-  /** Cierra el detalle del departamento */
+  /** Cierra el detalle del departamento y vuelve a la vista general */
   const handleCerrarDepartamento = useCallback(() => {
     setDepartamentoActivo(null);
     setPanaderiasDepto([]);
@@ -229,6 +223,20 @@ export function MapaPanaderias() {
       duration: 2000,
     });
   }, [isMobile]);
+
+  /** Cierra el detalle de panadería y vuelve al estado inicial del mapa */
+  const handleCerrarPanaderia = useCallback(() => {
+    setPanaderiaActiva(null);
+    // Volver al estado inicial solo si no hay un departamento activo
+    if (!departamentoActivo) {
+      const view = isMobile ? VIEW_INITIAL_MOBILE : VIEW_INITIAL_DESKTOP;
+      mapRef.current?.flyTo({
+        center: [view.longitude, view.latitude],
+        zoom: view.zoom,
+        duration: 2000,
+      });
+    }
+  }, [departamentoActivo, isMobile]);
 
   const handleAbrirChange = useCallback((abierto: boolean) => {
     setBuscadorAbierto(abierto);
@@ -315,87 +323,84 @@ export function MapaPanaderias() {
 
       {/* Overlay flotante */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="container-site relative h-full">
-          {/* Panel del buscador */}
-          <div
-            className={`pointer-events-auto absolute w-full transition-all duration-500 md:max-w-md ${
-              buscadorAbierto || departamentoActivo
-                ? "bottom-0 left-0 top-0"
-                : "left-0 right-0 top-4 px-4 md:left-0 md:right-auto md:top-6 md:px-0"
-            } ${
-              panelColapsado
-                ? "-translate-x-[calc(100%+1rem)]"
-                : "translate-x-0"
+        {/* Panel del buscador — fijo a la izquierda del viewport */}
+        <div
+          className={`pointer-events-auto absolute z-30 transition-all duration-500 ${
+            buscadorAbierto || departamentoActivo
+              ? "bottom-0 left-0 right-0 top-0 md:bottom-6 md:left-6 md:right-auto md:top-6 md:w-full md:max-w-sm"
+              : "bottom-auto left-4 right-4 top-4 md:left-6 md:right-auto md:top-6 md:w-full md:max-w-sm"
+          } ${
+            panelColapsado ? "-translate-x-[calc(100%+2rem)]" : "translate-x-0"
+          }`}
+        >
+          <BuscadorMapa
+            value={busqueda}
+            onChange={setBusqueda}
+            markers={markers}
+            departamentos={departamentos}
+            ciudades={ciudades}
+            departamentoActivo={departamentoActivo}
+            panaderiasDepto={panaderiasDepto}
+            cargandoDepto={cargandoDepto}
+            cargandoInicial={cargandoInicial}
+            panaderiasBusqueda={panaderiasBusqueda}
+            cargandoBusqueda={cargandoBusqueda}
+            onSelectDepartamento={handleSelectDepartamento}
+            onCerrarDepartamento={handleCerrarDepartamento}
+            onSelectPanaderia={handleSelectPanaderia}
+            onAbrirChange={handleAbrirChange}
+            panaderiaActivaId={panaderiaActiva?.id}
+          />
+        </div>
+
+        {/* Botón verde para colapsar */}
+        {(buscadorAbierto || departamentoActivo) && (
+          <button
+            type="button"
+            onClick={() => setPanelColapsado((v) => !v)}
+            aria-label={panelColapsado ? "Mostrar panel" : "Ocultar panel"}
+            className={`pointer-events-auto absolute top-1/2 z-10 hidden h-14 w-7 -translate-y-1/2 items-center justify-center rounded-r-2xl bg-brand-green text-white shadow-lg transition-all duration-500 hover:bg-brand-greenDark md:flex ${
+              panelColapsado ? "left-0" : "left-[calc(24rem+1.5rem)]"
             }`}
           >
-            <BuscadorMapa
-              value={busqueda}
-              onChange={setBusqueda}
-              markers={markers}
-              departamentos={departamentos}
-              ciudades={ciudades}
-              departamentoActivo={departamentoActivo}
-              panaderiasDepto={panaderiasDepto}
-              cargandoDepto={cargandoDepto}
-              cargandoInicial={cargandoInicial}
-              panaderiasBusqueda={panaderiasBusqueda}
-              cargandoBusqueda={cargandoBusqueda}
-              onSelectDepartamento={handleSelectDepartamento}
-              onCerrarDepartamento={handleCerrarDepartamento}
-              onSelectPanaderia={handleSelectPanaderia}
-              onAbrirChange={handleAbrirChange}
-              panaderiaActivaId={panaderiaActiva?.id}
-            />
-          </div>
-
-          {/* Botón verde para colapsar */}
-          {(buscadorAbierto || departamentoActivo) && (
-            <button
-              type="button"
-              onClick={() => setPanelColapsado((v) => !v)}
-              aria-label={panelColapsado ? "Mostrar panel" : "Ocultar panel"}
-              className={`pointer-events-auto absolute top-1/2 z-10 flex h-14 w-7 -translate-y-1/2 items-center justify-center rounded-r-2xl bg-brand-green text-white shadow-lg transition-all duration-500 hover:bg-brand-greenDark ${
-                panelColapsado ? "left-0" : "left-[28rem]"
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`h-5 w-5 transition-transform ${
+                panelColapsado ? "rotate-180" : ""
               }`}
+              aria-hidden="true"
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`h-5 w-5 transition-transform ${
-                  panelColapsado ? "rotate-180" : ""
-                }`}
-                aria-hidden="true"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-          )}
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+        )}
 
-          {/* Tarjeta promo (oculta si hay buscador abierto, depto o panadería activa) */}
-          {!buscadorAbierto && !departamentoActivo && !panaderiaActiva && (
-            <div className="pointer-events-auto absolute bottom-4 left-4 right-4 md:bottom-6 md:left-0 md:right-auto md:w-full md:max-w-sm">
-              <TarjetaPromo />
-            </div>
-          )}
+        {/* Tarjeta promo — fija a la izquierda del viewport */}
+        {!buscadorAbierto && !departamentoActivo && !panaderiaActiva && (
+          <div className="pointer-events-auto absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-auto md:w-full md:max-w-sm">
+            <TarjetaPromo />
+          </div>
+        )}
 
-          {/* Detalle de panadería */}
+        
+          {/* Detalle de panadería — fija al lado del buscador, FUERA del container-site */}
           {panaderiaActiva && (
             <div
               data-mapa-overlay
-              className="pointer-events-none absolute bottom-0 left-0 right-0 top-0 z-20 md:bottom-auto md:left-[30rem] md:right-auto md:top-6"
+              className="pointer-events-none absolute bottom-0 left-0 right-0 top-0 z-40 md:bottom-6 md:left-[calc(2.5rem+24rem+0.5rem)] md:right-auto md:top-6"
             >
               <PanaderiaDetalle
                 panaderia={panaderiaActiva}
-                onClose={() => setPanaderiaActiva(null)}
+                onClose={() => handleCerrarPanaderia()}
                 onShare={() => setModalCompartir(panaderiaActiva)}
               />
             </div>
           )}
-        </div>
       </div>
 
       {/* Modal de compartir */}

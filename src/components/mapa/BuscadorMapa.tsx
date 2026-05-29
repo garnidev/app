@@ -155,7 +155,9 @@ export function BuscadorMapa({
       // Buscar el departamento al que pertenece la ciudad
       const ciudad = ciudades.find((c) => c.nombre === u.nombre);
       if (ciudad) {
-        const depto = departamentos.find((d) => d.nombre === ciudad.departamento);
+        const depto = departamentos.find(
+          (d) => d.nombre === ciudad.departamento,
+        );
         if (depto) seleccionarDepartamento(depto);
       }
     }
@@ -211,9 +213,11 @@ export function BuscadorMapa({
             : undefined,
         transition: isDragging ? "none" : "transform 300ms ease-out",
       }}
-      className={`relative flex flex-col bg-white transition-all ${
-        panelVisible ? "h-full shadow-2xl " : "h-auto rounded-full "
-      } ${panelVisible && isMobile ? "rounded-t-3xl" : ""}`}
+      className={`relative flex flex-col transition-all ${
+        panelVisible
+          ? `h-full overflow-hidden bg-white shadow-2xl ${isMobile ? "rounded-t-3xl" : "rounded-3xl"}`
+          : "h-auto bg-transparent"
+      }`}
     >
       {/* Drag handle visible solo en móvil cuando el panel está abierto */}
       {panelVisible && isMobile && (
@@ -259,90 +263,90 @@ export function BuscadorMapa({
 
       {/* Input fijo arriba */}
       <div
-        className={`relative shrink-0 ${
+        className={`shrink-0 ${
           panelVisible
             ? isMobile
               ? "px-4 pb-3"
               : "border-b border-neutral-100 p-4"
-            : "p-3"
+            : ""
         }`}
       >
-        <input
-          type="search"
-          value={enDetalle ? departamentoActivo!.nombre : value}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => {
-            if (!enDetalle) setAbierto(true);
-          }}
-          onClick={() => {
-            if (!enDetalle) setAbierto(true);
-          }}
-          readOnly={enDetalle}
-          placeholder="Buscar"
-          aria-label="Buscar panaderías"
-          aria-expanded={abierto}
-          aria-haspopup="listbox"
-          className={`w-full rounded-full bg-white py-3 pl-5 pr-14 text-sm font-medium text-neutral-800 placeholder:text-neutral-500 focus:outline-none focus:ring-2 md:text-base ${
-            sinResultados
-              ? "border-2 border-red-500 text-red-600 focus:ring-red-500/30"
-              : panelVisible
-                ? "border border-neutral-200 focus:border-brand-green focus:ring-brand-green/30"
-                : "border-2 border-brand-green focus:ring-brand-green/30"
-          } ${enDetalle ? "cursor-default" : ""}`}
-        />
-        {/* Botón X o lupa al lado derecho del input */}
-        {enDetalle ? (
-          <button
-            type="button"
-            aria-label="Volver a la lista"
-            onClick={cerrarDetalle}
-            className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100 ${
-              panelVisible ? "right-6" : "right-5"
-            }`}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              className="h-4 w-4"
-              aria-hidden="true"
+        {/* Wrapper interno relativo: el input y la lupa siempre quedan centrados entre sí */}
+        <div className="relative">
+          <input
+            type="search"
+            value={enDetalle ? departamentoActivo!.nombre : value}
+            onChange={(e) => onChange(e.target.value)}
+            onFocus={() => {
+              if (!enDetalle) setAbierto(true);
+            }}
+            onClick={() => {
+              if (!enDetalle) setAbierto(true);
+            }}
+            readOnly={enDetalle}
+            placeholder="Buscar"
+            aria-label="Buscar panaderías"
+            aria-expanded={abierto}
+            aria-haspopup="listbox"
+            className={`w-full rounded-full bg-white py-3 pl-5 pr-14 text-sm font-medium text-neutral-800 placeholder:text-neutral-500 focus:outline-none focus:ring-2 md:text-base ${
+              sinResultados
+                ? "border-2 border-red-500 text-red-600 focus:ring-red-500/30"
+                : panelVisible
+                  ? "border border-neutral-200 focus:border-brand-green focus:ring-brand-green/30"
+                  : "border-2 border-brand-green focus:ring-brand-green/30"
+            } ${enDetalle ? "cursor-default" : ""}`}
+          />
+
+          {/* Botón X o lupa al lado derecho del input */}
+          {enDetalle ? (
+            <button
+              type="button"
+              aria-label="Volver a la lista"
+              onClick={cerrarDetalle}
+              className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-neutral-500 transition hover:bg-neutral-100"
             >
-              <path d="M6 6l12 12M6 18L18 6" />
-            </svg>
-          </button>
-        ) : (
-          <button
-            type="button"
-            aria-label="Buscar"
-            onClick={() => setAbierto(true)}
-            className={`absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full transition hover:bg-neutral-100 ${
-              panelVisible
-                ? "right-6 text-neutral-500"
-                : "right-5 text-brand-green"
-            }`}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-              aria-hidden="true"
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M6 6l12 12M6 18L18 6" />
+              </svg>
+            </button>
+          ) : (
+            <button
+              type="button"
+              aria-label="Buscar"
+              onClick={() => setAbierto(true)}
+              className={`absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full transition hover:bg-neutral-100 ${
+                panelVisible ? "text-neutral-500" : "text-brand-green"
+              }`}
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-          </button>
-        )}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Contenido scrolleable */}
       {panelVisible && (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scrollbar-hide">
           {enDetalle ? (
             <DepartamentoDetalle
               departamento={departamentoActivo!}
@@ -563,9 +567,10 @@ function UbicacionCard({
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full items-center gap-4 rounded-2xl bg-white px-3 py-3 text-left transition hover:bg-neutral-50"
+      className="group relative flex w-full items-center py-2 pl-0 pr-0 text-left"
     >
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-2 ring-brand-green/30">
+      {/* Foto circular sobresaliente */}
+      <div className="relative z-10 h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 shadow-md ring-2 ring-brand-green/40">
         <Image
           src={ubicacion.imagen}
           alt={ubicacion.nombre}
@@ -575,15 +580,29 @@ function UbicacionCard({
         />
       </div>
 
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate text-base font-bold italic text-support-navy md:text-lg">
-          {ubicacion.nombre}
-        </h3>
-        <p className="mt-0.5 text-xs text-neutral-600 md:text-sm">
-          {ubicacion.cantidadPanaderias === 1
-            ? "1 panadería"
-            : `${ubicacion.cantidadPanaderias} panaderías`}
-        </p>
+      {/* Rectángulo con texto + trigo */}
+      <div className="relative -ml-7 flex flex-1 items-center justify-between gap-3 rounded-full bg-white py-3 pl-10 pr-3 shadow-md ring-1 ring-neutral-100 transition group-hover:ring-brand-green/30 group-hover:shadow-lg">
+        {/* Texto */}
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-base font-bold italic text-support-navy md:text-lg">
+            {ubicacion.nombre}
+          </h3>
+          <p className="mt-0.5 text-xs text-neutral-600 md:text-sm">
+            {ubicacion.cantidadPanaderias === 1
+              ? "1 panadería"
+              : `${ubicacion.cantidadPanaderias} panaderías`}
+          </p>
+        </div>
+
+        {/* Ícono de trigo */}
+        <Image
+          src="/assets/trigo-verde.svg"
+          alt=""
+          width={28}
+          height={40}
+          className="h-10 w-auto shrink-0 opacity-70"
+          aria-hidden="true"
+        />
       </div>
     </button>
   );

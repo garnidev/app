@@ -79,7 +79,7 @@ export function PanaderiaDetalle({ panaderia, onClose, onShare }: Props) {
       className={`pointer-events-auto flex flex-col bg-white shadow-2xl ${
         isMobile
           ? "h-full rounded-t-3xl"
-          : "max-h-[calc(100vh-180px)] w-full max-w-md overflow-hidden rounded-3xl"
+          : "h-full w-full max-w-sm overflow-hidden rounded-3xl"
       }`}
     >
       {/* Drag handle solo en móvil */}

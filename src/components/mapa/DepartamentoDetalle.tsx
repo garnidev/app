@@ -85,7 +85,7 @@ export function DepartamentoDetalle({
                 </span>
               </div>
 
-              <ul className="flex flex-col gap-1 px-3 py-2">
+              <ul className="flex flex-col gap-2 px-3 py-3">
                 {agrupadas[ciudad].map((p) => {
                   const activa = panaderiaActivaId === p.id;
                   return (
@@ -93,15 +93,14 @@ export function DepartamentoDetalle({
                       <button
                         type="button"
                         onClick={() => onSelectPanaderia?.(p)}
-                        className={`group flex w-full items-center gap-4 rounded-2xl px-3 py-3 text-left transition ${
-                          activa
-                            ? "bg-brand-greenSoft ring-2 ring-brand-green"
-                            : "bg-white hover:bg-neutral-50"
-                        }`}
+                        className="group relative flex w-full items-center py-2 pl-0 pr-0 text-left"
                       >
+                        {/* Foto circular sobresaliente */}
                         <div
-                          className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-2 ${
-                            activa ? "ring-brand-green" : "ring-brand-green/30"
+                          className={`relative z-10 h-14 w-14 shrink-0 overflow-hidden rounded-full bg-neutral-200 shadow-md ring-2 ${
+                            activa
+                              ? "ring-brand-green"
+                              : "ring-brand-green/40"
                           }`}
                         >
                           <Image
@@ -113,13 +112,33 @@ export function DepartamentoDetalle({
                           />
                         </div>
 
-                        <div className="min-w-0 flex-1">
-                          <h4 className="truncate text-base font-bold italic text-support-navy md:text-lg">
-                            {p.nombre}
-                          </h4>
-                          <p className="mt-0.5 text-xs text-neutral-600 md:text-sm">
-                            Panadería aliada
-                          </p>
+                        {/* Rectángulo con texto + trigo */}
+                        <div
+                          className={`relative -ml-7 flex flex-1 items-center justify-between gap-3 rounded-full py-3 pl-10 pr-3 shadow-md ring-1 transition group-hover:shadow-lg ${
+                            activa
+                              ? "bg-brand-greenSoft ring-brand-green"
+                              : "bg-white ring-neutral-100 group-hover:ring-brand-green/30"
+                          }`}
+                        >
+                          {/* Texto */}
+                          <div className="min-w-0 flex-1">
+                            <h4 className="truncate text-base font-bold italic text-support-navy md:text-lg">
+                              {p.nombre}
+                            </h4>
+                            <p className="mt-0.5 text-xs text-neutral-600 md:text-sm">
+                              Panadería aliada
+                            </p>
+                          </div>
+
+                          {/* Ícono de trigo */}
+                          <Image
+                            src="/assets/trigo-verde.svg"
+                            alt=""
+                            width={28}
+                            height={40}
+                            className="h-10 w-auto shrink-0 opacity-70"
+                            aria-hidden="true"
+                          />
                         </div>
                       </button>
                     </li>
