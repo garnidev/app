@@ -108,7 +108,9 @@ export function Hero() {
             transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
             className="z-10 mt-6 sm:mt-8"
           >
-            <div className={shouldReduceMotion ? "" : "animate-seal-float"}>
+            {/* Animación de flotación desactivada (animate-seal-float) */}
+            {/* className={shouldReduceMotion ? "" : "animate-seal-float" */}
+            <div className="">
               <Image
                 src="/assets/logo-masa-madre.svg"
                 alt="Sabores que fermentan nuestra tierra"
@@ -148,7 +150,9 @@ export function Hero() {
             transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
             className="absolute right-6 top-20 z-20 xl:right-20"
           >
-            <div className={shouldReduceMotion ? "" : "animate-seal-float"}>
+            {/* Animación de flotación desactivada (animate-seal-float) */}
+            {/* className={shouldReduceMotion ? "" : "animate-seal-float" */}
+            <div className="">
               <Image
                 src="/assets/logo-masa-madre.svg"
                 alt="Sabores que fermentan nuestra tierra"

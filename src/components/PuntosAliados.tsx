@@ -92,7 +92,7 @@ export function PuntosAliados() {
           className="h-full w-full"
         >
           <path
-            d="M0,70 C360,10 1080,10 1440,70"
+            d="M0,70 C360,0 1080,10 1440,70"
             fill="none"
             stroke="var(--color-brand-green)"
             strokeWidth="20"

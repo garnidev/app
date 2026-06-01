@@ -41,11 +41,11 @@ export function ColombiaHuele() {
                 <button
                   type="button"
                   onClick={() => setVideoOpen(true)}
-                  className="group relative block w-full overflow-hidden rounded-2xl border-[6px] border-white md:border-8"
+                  className="group relative block w-full overflow-hidden rounded-2xl md:border-8"
                   aria-label="Reproducir video"
                 >
                   <Image
-                    src="/assets/imagen-referencia-video-beneficios.svg"
+                    src="/assets/imagen-referencia-video-beneficios_m.svg"
                     alt="Video: preparación de masa madre"
                     width={700}
                     height={400}
@@ -86,10 +86,10 @@ export function ColombiaHuele() {
               </div>
             </div>
 
-            {/* Hashtag inferior: pestaña anclada al borde inferior */}
-            <div className="relative z-10 mt-8 md:mt-10">
-              <div className="-mx-6 rounded-t-3xl bg-white px-6 py-5 text-center md:-mx-12">
-                <span className="text-2xl font-bold italic text-brand-purple">
+            {/* Hashtag inferior: pill central más pequeña en móvil, pestaña anclada en tablet+ */}
+            <div className="relative z-10 mt-8 flex justify-center md:mt-10 md:block">
+              <div className="inline-block rounded-t-3xl rounded-b-3xl bg-white px-6 py-3 text-center md:-mx-12 md:inline-block md:rounded-b-none md:px-6 md:py-5">
+                <span className="text-lg font-bold italic text-brand-purple md:text-2xl">
                   #TradiciónQueNutre
                 </span>
               </div>
