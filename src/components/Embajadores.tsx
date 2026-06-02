@@ -16,7 +16,7 @@ const CHIPS = [
  */
 export function Embajadores() {
   return (
-    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-0 md:pt-12">
+    <section className="relative bg-brand-purpleDark pb-16 pt-4 md:pb-10 md:pt-12">
       <div className="container-site">
         <div className="flex flex-col items-center  gap-8 lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-12">
           {/* Columna de texto (segunda en móvil, primera en desktop) */}
@@ -80,7 +80,7 @@ export function Embajadores() {
               <div
                 className="
                   absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white
-                  h-[280px] w-[280px] border-[10px] border-white
+                  h-[280px] w-[280px] border-[15px] border-white
                   sm:h-[360px] sm:w-[30px] sm:border-[16px]
                   md:h-[440px] md:w-[440px] md:border-[20px]
                   lg:top-[40%] lg:h-[390px] lg:w-[390px] lg:border-[20px]
@@ -102,11 +102,11 @@ export function Embajadores() {
                 width={600}
                 height={660}
                 className="
-                  absolute z-10 -translate-x-1/2 object-contain w-auto max-w-none
-                  -bottom-2 left-[52%] h-[100%]
-                  sm:bottom-4 sm:left-[52%] sm:h-[100%]
+                  absolute  -translate-x-1/2 object-contain w-auto max-w-none
+                  -bottom-2 left-[57%] h-[100%]
+                  sm:bottom-8 sm:left-[52%] sm:h-[100%]
                   md:bottom-4 md:left-[55%] md:h-[120%]
-                  lg:-bottom-4 lg:left-[53%] lg:h-[135%]
+                  lg:-bottom-32 lg:left-[57%] lg:h-[175%]
                 "
                 priority={false}
               />

@@ -35,7 +35,7 @@ export function ColombiaHuele() {
           {/* ==============  MÓVIL / TABLET (< lg) — intacto  =========== */}
           {/* ============================================================ */}
           <div className="relative overflow-hidden rounded-[2rem] bg-brand-purpleDark p-6 pb-0 md:p-12 md:pb-0 lg:hidden">
-            <div className="relative z-10 grid items-center gap-6 md:gap-8">
+            <div className="relative z-10 grid items-center gap-2 md:gap-8">
               {/* Video */}
               <div className="relative">
                 <button
@@ -87,14 +87,22 @@ export function ColombiaHuele() {
             </div>
 
             {/* Hashtag inferior: pill central más pequeña en móvil, pestaña anclada en tablet+ */}
-            <div className="relative z-10 mt-8 flex justify-center md:mt-10 md:block">
-              <div className="inline-block rounded-t-3xl rounded-b-3xl bg-white px-6 py-3 text-center md:-mx-12 md:inline-block md:rounded-b-none md:px-6 md:py-5">
-                <span className="text-lg font-bold italic text-brand-purple md:text-2xl">
-                  #TradiciónQueNutre
-                </span>
+            <div className="relative z-10 mt-3 flex justify-center md:mt-10 md:block">
+              <div className="inline-block rounded-t-3xl rounded-b-3xl bg-purpleDark px-6 py-3 text-center md:-mx-12 md:inline-block md:rounded-b-none md:px-6 md:py-5">
               </div>
             </div>
           </div>
+
+          <div className="block md:hidden">
+          <div className="relative z-10 mt-3 flex justify-center md:mt-10 md:block">
+            <div className="inline-block translate-y-[-44px] translate-x-[05px] rounded-t-3xl rounded-b-3xl bg-white px-6 py-3 text-center">
+              <span className="text-lg font-bold italic text-brand-purple md:text-2xl">
+                #TradiciónQueNutre
+              </span>
+            </div>
+          </div>
+          </div>
+          
 
           {/* ============================================================ */}
           {/* ==============  DESKTOP (lg+) — nueva estructura  ========== */}

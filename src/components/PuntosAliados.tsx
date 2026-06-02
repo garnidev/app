@@ -16,23 +16,23 @@ export function PuntosAliados() {
       <div className="container-site grid items-center gap-10 lg:grid-cols-[1fr_1.4fr]">
         {/* Columna izquierda - texto (arriba en móvil) */}
         <div className="text-center lg:text-left">
-          <h2 className="text-4xl font-extrabold italic leading-none text-brand-green md:text-5xl lg:text-6xl">
+          <h2 className="text-4xl font-bold italic leading-none text-brand-green md:text-5xl lg:text-6xl">
             Puntos aliados
           </h2>
 
-          <p className="mt-3 text-lg font-bold italic text-[#002c46] md:text-xl">
-            Aquí esta tu próxima panadería favorita.
+          <p className="mt-3 text-lg font-semibold italic text-[#002c46] md:text-xl leading-none leading-[1.4]">
+            Aquí está tu próxima panadería favorita.
           </p>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-neutral-600 md:text-lg lg:mx-0">
+          <p className="mx-auto mt-2 max-w-xl text-base text-neutral-600 md:mt-6 md:text-lg md:leading-[1.4] lg:mx-0">
             Explora nuestro mapa de panaderías aliadas y encuentra la masa madre
             cerca de ti. Tradición ancestral, dale a tu cuerpo un pan más
             auténtico, más natural y lleno de sabor.
           </p>
 
           <Link
-            href="/mapa-panaderias"
-            className="mt-10 inline-flex items-center gap-3 rounded-2xl bg-brand-purple px-8 py-4 text-base font-semibold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-brand-purple-mid hover:shadow-lg"
+            href="#mapa"
+            className="mt-4 inline-flex items-center gap-3 rounded-2xl bg-brand-purple px-8 py-4 text-base font-semibold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-brand-purple-mid hover:shadow-lg md:mt-10"
           >
             <svg
               width="22"

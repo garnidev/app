@@ -38,7 +38,7 @@ const LINKS_INST = [
  */
 export function Footer() {
   return (
-    <footer id="soporte" className="relative">
+    <footer id="soporte" className="relative ">
       {/* Fondo dividido: morado arriba, verde abajo */}
       <div className="absolute inset-0 flex flex-col" aria-hidden="true">
         <div className="flex-1 bg-brand-purpleDark" />
@@ -46,7 +46,7 @@ export function Footer() {
       </div>
 
       {/* Tarjeta blanca flotante */}
-      <div className="relative px-4 pb-8 pt-2 md:px-8 md:pb-12 md:pt-4">
+      <div className="relative px-4 pb-8 md:px-8 md:pb-12">
         <div className="container-site rounded-[2rem] bg-white px-6 py-10 shadow-lg md:px-12 md:py-14 lg:px-16">
           {/* Título principal */}
           <h3 className="text-sm font-bold uppercase tracking-wide text-neutral-900 md:text-base">
@@ -66,7 +66,7 @@ export function Footer() {
               src="/assets/logo-mintrabajo.png"
               alt="Gobierno de Colombia - MINTRABAJO"
               width={100}
-              height={120}
+              height={90}
               className="h-20 w-auto md:h-24"
             />
           </div>

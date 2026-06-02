@@ -42,7 +42,7 @@ const TESTIMONIOS: Testimonio[] = [
  */
 export function Testimonios() {
   return (
-    <section id="historia" className="bg-white pb-12 pt-4 md:py-16">
+    <section id="historia" className="bg-white pb-12 pt-4 md:pb-28 md:pt-16">
       {/* Desktop: grid estático */}
       <div className="container-site hidden md:block">
         <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6">
