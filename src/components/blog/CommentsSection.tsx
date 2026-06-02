@@ -153,7 +153,7 @@ export function CommentsSection({ slug }: Props) {
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="mt-10 rounded-2xl bg-white md:mt-12"
+        className="mt-10 rounded-2xl  md:mt-12"
         aria-label="Formulario de comentarios"
       >
         <h3 className="flex items-center gap-3 text-lg font-bold italic text-neutral-900 md:text-xl">

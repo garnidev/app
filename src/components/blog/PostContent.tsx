@@ -10,7 +10,7 @@ type Props = {
  */
 export function PostContent({ contenido }: Props) {
   return (
-    <article className="mx-auto max-w-3xl">
+    <article className="mx-auto max-w-3xl ">
       <div
         className="tiptap-content mt-8 md:mt-10"
         dangerouslySetInnerHTML={{ __html: contenido }}

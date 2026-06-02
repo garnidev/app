@@ -30,7 +30,7 @@ export function AdminTopbar({
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <Breadcrumbs items={breadcrumbs} />
 
-      <form
+      {/* <form
         role="search"
         onSubmit={handleSubmit}
         className="relative w-full md:max-w-sm"
@@ -61,7 +61,7 @@ export function AdminTopbar({
             <path d="M21 21l-4.35-4.35" />
           </svg>
         </button>
-      </form>
+      </form> */}
     </div>
   );
 }

@@ -63,8 +63,8 @@ export function PostHero({ post }: { post: PostDetalle }) {
             <div
               className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
               style={{
-                width: "180px",
-                height: "200px",
+                width: "140",
+                height: "50px",
                 backgroundImage: "url('/assets/boton-dorado.svg')",
                 backgroundSize: "100% 100%",
                 backgroundRepeat: "no-repeat",
@@ -73,16 +73,16 @@ export function PostHero({ post }: { post: PostDetalle }) {
             />
 
             {/* Contenido (sigue su tamaño natural) */}
-            <Image
+            {/* <Image
               src="/assets/icono-panadero-menu.svg"
               alt=""
               width={22}
               height={22}
               className="relative z-10 h-5 w-5 brightness-0"
               aria-hidden="true"
-            />
+            /> */}
             <span className="relative z-10 text-xs font-extrabold uppercase tracking-[0.15em] text-neutral-900">
-              {post.keyword}
+              {/* {post.keyword} */}
             </span>
           </div>
         </div>

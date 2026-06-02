@@ -65,10 +65,12 @@ export default async function PostPage({
       <main className="min-h-screen bg-white">
         <PostHero post={post} />
 
-        <section className="container-site relative z-10 pb-10">
+        <section className="bg-gradient-to-b from-white to-[#FEFAF6]">
+        <div className="container-site relative z-10 pb-10">
           <PostContent contenido={post.contenido} />
           <PostTags tags={post.tags} />
           <CommentsSection slug={slug} />
+        </div>  
         </section>
       </main>
     </>

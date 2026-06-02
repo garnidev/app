@@ -28,7 +28,7 @@ export default async function AdminHomePage() {
       <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-6 py-4 md:px-10 md:py-6">
         {/* ═══ HERO: imagen + bienvenida + buscador ═══ */}
         <section className="flex flex-col items-center text-center">
-          <div className="relative w-full max-w-[200px] md:max-w-[460px]">
+          <div className="relative w-full max-w-[200px] md:max-w-[400px]">
             <Image
               src="/assets/hero-bienvenida.svg"
               alt=""

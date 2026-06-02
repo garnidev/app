@@ -129,40 +129,42 @@ function CarruselMovil() {
   );
 }
 
-function TestimonioCard({ nombre, cita, panaderia, ciudad, imagen }: Testimonio) {
+function TestimonioCard({
+  nombre,
+  cita,
+  panaderia,
+  ciudad,
+  imagen,
+}: Testimonio) {
   return (
-    <article className="relative mx-auto w-full max-w-sm pl-14 pt-14 md:pl-16 md:pt-16">
+    <article className="relative mx-auto w-full max-w-sm pl-10 pt-10 md:pl-12 md:pt-12">
       <div className="relative">
-        {/* Rectángulo de fondo verde claro con esquinas cóncavas (mordiscos circulares) */}
-        <div
-          className="min-h-[350px] rounded-tl-[6rem] rounded-bl-[6rem] rounded-tr-[6rem] bg-brand-greenSoft px-8 pb-12 pt-16 md:min-h-[370px] md:px-10 md:pt-20"
-          style={{
-            WebkitMaskImage: `
-      radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
-      linear-gradient(black, black)
-    `,
-            WebkitMaskComposite: "source-in",
-            maskImage: `
-      radial-gradient(circle 50px at 100% 100%, transparent 98%, black 100%),
-      linear-gradient(black, black)
-    `,
-            maskComposite: "intersect",
-          }}
-        >
+        {/* Rectángulo SVG de fondo */}
+        <Image
+          src="/assets/fondo-testimonio.svg"
+          alt=""
+          width={310}
+          height={393}
+          className="block h-auto w-full"
+          aria-hidden="true"
+        />
+
+        {/* Contenido encima del SVG */}
+        <div className="absolute inset-0 px-8 pb-12 pt-16 md:px-10 md:pt-20">
           {/* Nombre - alineado a la derecha del mordisco */}
           <h3 className="-mt-10 whitespace-pre-line pl-10 text-xl text-center font-bold italic leading-tight text-support-navy md:-mt-16 md:text-2xl">
             {nombre}
           </h3>
 
           {/* Cita */}
-          <p className="mt-6 text-sm leading-snug text-support-navy md:text-[15px]">
-            <span className="text-support-navy">“</span>
+          <p className="mt-[60px] text-sm leading-snug text-support-navy md:mt-[55px] md:text-[15px]">
+            <span className="text-support-navy">"</span>
             {cita}
-            <span className="text-support-navy">”</span>
+            <span className="text-support-navy">"</span>
           </p>
 
           {/* Meta: ubicación */}
-          <div className="mt-6 flex flex-col items-start gap-2">
+          <div className="mt-[20px] flex flex-col items-start gap-2 md:mt-[24px]">
             <Image
               src="/assets/ubicacion-historia.svg"
               alt=""
@@ -177,7 +179,7 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad, imagen }: Testimonio)
         </div>
 
         {/* Foto circular - ~mitad fuera del rectángulo por la izquierda y arriba */}
-        <div className="absolute -left-14 -top-14 h-28 w-28 overflow-hidden rounded-full border-[5px] border-white shadow-lg md:-left-16 md:-top-16 md:h-32 md:w-32">
+        <div className="absolute -left-[32px] -top-[20px] h-28 w-28 md:-left-[37px] md:-top-[30px] md:h-32 md:w-32">
           <Image
             src={imagen}
             alt={nombre}
@@ -190,14 +192,14 @@ function TestimonioCard({ nombre, cita, panaderia, ciudad, imagen }: Testimonio)
         {/* Ícono circular verde - ~mitad fuera del rectángulo por la derecha y abajo */}
         <button
           type="button"
-          className="absolute -bottom-7 -right-1 flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-105"
+          className="absolute -bottom-[28px] -right-[4px] flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-205 md:-bottom-[12px] md:right-[10px]"
           aria-label={`Ver historia de ${nombre}`}
         >
           <Image
             src="/assets/icono-seccion-historia.svg"
             alt=""
-            width={56}
-            height={56}
+            width={96}
+            height={96}
             className="h-full w-full"
           />
         </button>
