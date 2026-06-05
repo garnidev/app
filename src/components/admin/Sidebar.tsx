@@ -82,13 +82,13 @@ export function Sidebar({ usuario, colapsado, onToggle, hidratado }: Props) {
         />
       </div>
 
-      {/* ═══ BOTÓN COLAPSAR ═══ */}
+      {/* ═══ BOTÓN COLAPSAR (centrado verticalmente) ═══ */}
       <button
         type="button"
         onClick={onToggle}
         aria-label={colapsado ? "Expandir menú" : "Contraer menú"}
         aria-expanded={!colapsado}
-        className="absolute right-0 top-[148px] z-20 hidden h-8 w-8 translate-x-1/2 items-center justify-center rounded-full bg-brand-green text-white shadow-md ring-2 ring-brand-purpleDark transition hover:bg-brand-greenDark md:flex"
+        className="absolute right-0 top-1/2 z-20 hidden h-8 w-8 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-brand-green text-white shadow-md ring-2 ring-brand-purpleDark transition hover:bg-brand-greenDark md:flex"
       >
         <svg
           viewBox="0 0 24 24"
@@ -109,22 +109,23 @@ export function Sidebar({ usuario, colapsado, onToggle, hidratado }: Props) {
       {/* ═══ NAVEGACIÓN ═══ */}
       <nav className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-6">
         {gruposFiltrados.map((grupo, idx) => (
-          <div key={idx} className={idx > 0 ? "mt-5" : ""}>
+          <div key={idx} className={idx > 0 ? "mt-6" : ""}>
             {grupo.title && (
               <>
-                <div
-                  className="mx-3 my-3 h-px bg-white/15"
-                  aria-hidden="true"
-                />
+                {/* Título PRIMERO, divisor DESPUÉS */}
                 {!colapsado && (
-                  <p className="mb-2 hidden px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 md:block">
+                  <p className="mb-3 hidden px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 md:block">
                     {grupo.title}
                   </p>
                 )}
+                <div
+                  className="mx-3 mb-3 h-px bg-white/15"
+                  aria-hidden="true"
+                />
               </>
             )}
 
-            <ul className="space-y-1">
+            <ul className="space-y-2">
               {grupo.items.map((item) => {
                 const activo = esActivo(item.href);
                 return (
@@ -136,7 +137,7 @@ export function Sidebar({ usuario, colapsado, onToggle, hidratado }: Props) {
                       className={`group flex items-center gap-3 rounded-xl transition ${
                         colapsado
                           ? "justify-center p-3"
-                          : "justify-center p-3 md:justify-start md:px-4 md:py-2.5"
+                          : "justify-center p-3 md:justify-start md:px-4 md:py-3"
                       } ${
                         activo
                           ? "bg-brand-green text-white shadow-lg shadow-brand-green/30"

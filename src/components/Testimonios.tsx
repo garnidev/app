@@ -13,7 +13,7 @@ type Testimonio = {
 
 const TESTIMONIOS: Testimonio[] = [
   {
-    nombre: "Jorge \n Ramírez",
+    nombre: "Paula \n Bernal",
     cita: "Empecé desde cero y aprender masa madre me dio identidad. Vendo algo hecho con tiempo y propósito.",
     panaderia: "Emprendedora \n panadera",
     ciudad: "Bogotá",
@@ -152,7 +152,7 @@ function TestimonioCard({
         {/* Contenido encima del SVG */}
         <div className="absolute inset-0 px-8 pb-12 pt-16 md:px-10 md:pt-20">
           {/* Nombre - alineado a la derecha del mordisco */}
-          <h3 className="-mt-10 whitespace-pre-line pl-10 text-xl text-center font-bold italic leading-tight text-support-navy md:-mt-16 md:text-2xl">
+          <h3 className="-mt-10 whitespace-pre-line pl-10 text-xl text-center font-bold italic leading-tight text-support-navy md:-mt-16 md:text-3xl">
             {nombre}
           </h3>
 
@@ -192,7 +192,7 @@ function TestimonioCard({
         {/* Ícono circular verde - ~mitad fuera del rectángulo por la derecha y abajo */}
         <button
           type="button"
-          className="absolute -bottom-[28px] -right-[4px] flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-205 md:-bottom-[12px] md:right-[10px]"
+          className="absolute -bottom-[28px] -right-[4px] flex h-24 w-24 items-center justify-center rounded-full border-[8px] border-white bg-brand-green transition hover:scale-105 md:-bottom-[32px] md:-right-[8px] md:h-32 md:w-32"
           aria-label={`Ver historia de ${nombre}`}
         >
           <Image

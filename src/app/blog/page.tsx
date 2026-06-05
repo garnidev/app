@@ -125,8 +125,13 @@ export default function BlogPage() {
 
   return (
     <>
-      <GovBar />
-      <Header />
+      <div className="fixed left-0 right-0 top-0 z-50 md:static">
+        <GovBar />
+        <Header />
+      </div>
+
+      {/* Spacer móvil */}
+      <div className="h-[120px] md:hidden" aria-hidden="true" />
       <main className="min-h-screen bg-white">
         {/* ═══════════════════════════════════════════════════════════════
             BANNER SUPERIOR con fondo de trigo + curva inferior

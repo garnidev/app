@@ -107,16 +107,11 @@ export default function LoginPage() {
 
           {/* Título grande */}
           <h1
-            className="mt-10 text-4xl font-extrabold italic leading-[1.05] md:text-5xl lg:text-6xl"
+            className="mt-10 text-4xl font-extrabold italic leading-[1.05] md:text-5xl lg:text-5xl"
             style={{ textShadow: "0 4px 12px rgba(0, 0, 0, 0.8)" }}
           >
-            Tradición
-            <br />
-            que nutre,
-            <br />
-            técnica que
-            <br />
-            transforma
+            Tradición que nutre,
+            técnica que transforma
           </h1>
 
           {/* Descripción */}

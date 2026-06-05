@@ -100,7 +100,7 @@ export function PanaderiasClient({ departamentos, ciudades }: Props) {
       {/* ═══ Barra de filtros + acciones ═══ */}
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         {/* Filtros izquierdos */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full flex-col items-stretch gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center">
           <FiltroDropdown
             label="Departamento"
             icon="flag"
@@ -238,7 +238,7 @@ function FiltroDropdown({
         type="button"
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
-        className={`inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-bold transition ${
+        className={`inline-flex w-full items-center gap-2 rounded-full border-2 px-5 py-2.5 text-sm font-bold transition md:w-auto ${
           hayValor
             ? "border-brand-green bg-white text-brand-green"
             : "border-brand-green/30 bg-white text-brand-green hover:border-brand-green"
@@ -251,7 +251,7 @@ function FiltroDropdown({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="h-4 w-4"
+          className="h-4 w-4 shrink-0"
           aria-hidden="true"
         >
           {icon === "flag" ? (
@@ -267,11 +267,26 @@ function FiltroDropdown({
           )}
         </svg>
 
-        <span>{label}</span>
+        <span className="shrink-0">{label}</span>
 
+        {/* Flecha — siempre visible, va después del label */}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`h-4 w-4 shrink-0 transition-transform ${abierto ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+
+        {/* Píldora del valor — al final, después de la flecha */}
         {hayValor && (
-          <span className="ml-1 inline-flex items-center gap-1.5 rounded-full bg-brand-green px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-white">
-            {valorActivo}
+          <span className="ml-auto inline-flex min-w-0 items-center gap-1.5 truncate rounded-full bg-brand-green px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-white">
+            <span className="truncate">{valorActivo}</span>
             <span
               role="button"
               tabIndex={0}
@@ -286,7 +301,7 @@ function FiltroDropdown({
                   onClear();
                 }
               }}
-              className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-full hover:bg-white/20"
+              className="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-white/20"
               aria-label={`Quitar filtro ${valorActivo}`}
             >
               <svg
@@ -304,19 +319,6 @@ function FiltroDropdown({
             </span>
           </span>
         )}
-
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={`h-4 w-4 transition-transform ${abierto ? "rotate-180" : ""}`}
-          aria-hidden="true"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
       </button>
 
       {abierto && (

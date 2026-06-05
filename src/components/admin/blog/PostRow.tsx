@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Post } from "@/data/posts";
 import { EstadoBadge } from "./EstadoBadge";
 import { TagChip, colorParaTag } from "./TagChip";
@@ -26,10 +25,8 @@ function formatearFecha(iso: string): string {
 
 /**
  * Fila horizontal de un post en el listado del admin.
- * - Thumbnail cuadrado
- * - Título + metadatos (estado, fecha, tiempo, visitas)
- * - Tags
- * - Botones de acción: Editar + Comentarios + Archivar
+ * - MÓVIL: layout vertical con thumbnail grande, badges en línea
+ * - DESKTOP: layout horizontal con thumbnail pequeño + meta inline
  */
 export function PostRow({ post }: Props) {
   const estado = post.estado ?? "publicado";
@@ -38,13 +35,13 @@ export function PostRow({ post }: Props) {
 
   return (
     <article className="group flex flex-col gap-4 rounded-2xl bg-white p-4 ring-1 ring-neutral-200 transition hover:shadow-md md:flex-row md:items-center md:p-5">
-      {/* Thumbnail */}
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-neutral-100 md:h-16 md:w-16">
+      {/* Thumbnail — ocupa todo el ancho en móvil, pequeño en desktop */}
+      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-xl bg-neutral-100 md:aspect-square md:h-16 md:w-16">
         <Image
           src={post.imagen.src}
           alt={post.imagen.alt}
           fill
-          sizes="80px"
+          sizes="(max-width: 768px) 100vw, 80px"
           className="object-cover"
         />
       </div>
@@ -55,9 +52,13 @@ export function PostRow({ post }: Props) {
           {post.titulo}
         </h3>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-neutral-500">
+        {/* Estado en móvil va separado, en desktop inline con el resto */}
+        <div className="mt-2">
           <EstadoBadge estado={estado} />
+        </div>
 
+        {/* Meta inline: fecha, tiempo, visitas — en una línea */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
           <span className="inline-flex items-center gap-1.5">
             <IconoCalendario />
             {formatearFecha(post.fechaISO)}
@@ -72,31 +73,24 @@ export function PostRow({ post }: Props) {
             <IconoOjo />
             {visitas} visitas
           </span>
-
-          {post.tags && post.tags.length > 0 && (
-            <>
-              <span
-                className="hidden h-4 w-px bg-neutral-300 md:inline-block"
-                aria-hidden="true"
-              />
-              <div className="flex flex-wrap items-center gap-2">
-                {post.tags.slice(0, 3).map((tag, idx) => (
-                  <TagChip
-                    key={idx}
-                    label={tag.label}
-                    color={colorParaTag(tag.label)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
         </div>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {post.tags.slice(0, 3).map((tag, idx) => (
+              <TagChip
+                key={idx}
+                label={tag.label}
+                color={colorParaTag(tag.label)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Botones de acción */}
-      
-        <PostActions slug={post.slug} totalComentarios={totalComentarios} />
-      
+      <PostActions slug={post.slug} totalComentarios={totalComentarios} />
     </article>
   );
 }

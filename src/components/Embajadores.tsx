@@ -103,7 +103,7 @@ export function Embajadores() {
                 height={660}
                 className="
                   absolute  -translate-x-1/2 object-contain w-auto max-w-none
-                  -bottom-2 left-[57%] h-[100%]
+                  -bottom-4 left-[57%] h-[100%]
                   sm:bottom-8 sm:left-[52%] sm:h-[100%]
                   md:bottom-4 md:left-[55%] md:h-[120%]
                   lg:-bottom-32 lg:left-[57%] lg:h-[175%]

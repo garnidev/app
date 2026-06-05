@@ -115,12 +115,16 @@ function UserPopover({
         className="fixed inset-0 z-40 cursor-default"
       />
       <div
-        className={`absolute bottom-full z-50 mb-2 w-56 overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 ${
-          colapsado ? "left-full ml-2" : "left-0"
+        className={`fixed bottom-20 z-[60] w-56 overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 ${
+          colapsado
+            ? "left-24"
+            : "left-4 md:left-auto md:bottom-full md:absolute md:mb-2"
         }`}
       >
         <div className="border-b border-neutral-100 px-4 py-3">
-          <p className="text-xs font-semibold text-neutral-500">Sesión activa</p>
+          <p className="text-xs font-semibold text-neutral-500">
+            Sesión activa
+          </p>
         </div>
         <ul className="py-1">
           <li>

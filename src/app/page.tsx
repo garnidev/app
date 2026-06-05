@@ -13,14 +13,22 @@ export default function HomePage() {
   return (
     <>
       {/* <SplashScreen /> */}
-      <GovBar />
-      <Header />
+
+      {/* Wrapper sticky solo en móvil — fija GovBar + Header arriba */}
+      <div className="fixed left-0 right-0 top-0 z-50 md:static">
+        <GovBar />
+        <Header />
+      </div>
+
+      {/* Spacer para evitar que el contenido quede debajo del header fijo en móvil */}
+      <div className="h-[120px] md:hidden" aria-hidden="true" />
+
       <main>
         <Hero />
         <PuntosAliados />
         <Beneficios />
-        <ColombiaHuele />  
-        <Testimonios />      
+        <ColombiaHuele />
+        <Testimonios />
         <Embajadores />
       </main>
       <Footer />

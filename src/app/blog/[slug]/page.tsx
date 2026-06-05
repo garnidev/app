@@ -60,17 +60,20 @@ export default async function PostPage({
 
   return (
     <>
-      <GovBar />
-      <Header />
+      <div className="fixed left-0 right-0 top-0 z-50 md:static">
+        <GovBar />
+        <Header />
+      </div>
+      <div className="h-[120px] md:hidden" aria-hidden="true" />
       <main className="min-h-screen bg-white">
         <PostHero post={post} />
 
         <section className="bg-gradient-to-b from-white to-[#FEFAF6]">
-        <div className="container-site relative z-10 pb-10">
-          <PostContent contenido={post.contenido} />
-          <PostTags tags={post.tags} />
-          <CommentsSection slug={slug} />
-        </div>  
+          <div className="container-site relative z-10 pb-10">
+            <PostContent contenido={post.contenido} />
+            <PostTags tags={post.tags} />
+            <CommentsSection slug={slug} />
+          </div>
         </section>
       </main>
     </>
